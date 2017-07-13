@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS"
+              label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_TITLE"
+              description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_DESC"
+              addfieldpath="administrator/components/com_bidorbuystoreintegrator/elements">
+        <field name="username" type="text"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_USERNAME_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_USERNAME_DESC"/>
+        <field name="password" type="password"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_PASSWORD_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_PASSWORD_DESC"/>
+        <field name="filename" type="text" default="tradefeed"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_FILENAME_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_FILENAME_DESC"/>
+        <field name="compressLibrary" type="CompressLibrary"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_COMPRESSLIB_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_COMPRESSLIB_DESC" default="0">
+        </field>
+        <field name="defaultStockQuantity" type="text" default="5"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_MINQTYINSTOCK_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_MINQTYINSTOCK_DESC" filter="integer"/>
+        <field name="enableNotificationAddresses" type="text" default=""
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_SENDLOGSTOEMAILS_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_SENDLOGSTOEMAILS_DESC"/>
+        <field name="enableEmailNotifications" type="checkbox"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_ENABLEEMAILNOTIFICATIONS_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_ENABLEEMAILNOTIFICATIONS_DESC" value="1"
+               default="0"/>
+        <field name="loggingLevel" type="LoggingLevel"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_LOGLEVEL_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_LOGLEVEL_DESC" default="error">
+        </field>
+        <field name="categorySlug" type="checkbox"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_USECATEGORYSLUG_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_USECATEGORYSLUG_DESC" value="1" 
+               default="0">
+        </field>
+    </fieldset>
+
+    <fieldset name="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA"
+              label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA_TITLE"
+              description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA_DESC"
+              addfieldpath="administrator/components/com_bidorbuystoreintegrator/elements">
+        <field name="exportQuantityMoreThan" type="text" default="5"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA_EXPORTMORETHAN_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA_EXPORTMORETHAN_DESC" filter="integer"/>
+        <!--field name="exportActiveProducts" type="checkbox"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA_ACTIVEONLY_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA_ACTIVEONLY_DESC" value="1"
+               default="0"/-->
+        <field name="excludeCategories" type="BobCategories" default="" multiple="true"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA_EXCLUDEDCATS_TITLE"
+               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA_EXCLUDEDCATS_DESC" filter="array">
+        </field>
+    </fieldset>
+
+    <fieldset name="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_LINKS"
+              label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_LINKS"
+              description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA_DESC">
+        <field name="export" type="text" readonly="true"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_URL" />
+        <field name="download" type="text" readonly="true"
+               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_DOWNLOAD_URL" />
+    </fieldset>
+</form>

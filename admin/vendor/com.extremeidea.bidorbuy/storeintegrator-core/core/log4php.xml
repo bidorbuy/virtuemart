@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<log4php:configuration xmlns:log4php="http://logging.apache.org/log4php/">
+    <appender name="appenderLocalFile" class="com\extremeidea\bidorbuy\storeintegrator\core\LoggerAppenderDailyFile">
+        <layout class="com\extremeidea\php\tools\log4php\LoggerLayoutPattern">
+            <param name="conversionPattern" value="%d{m/d/y H:i:s,u} %server{REMOTE_ADDR} [%t] %p %c %x - %m%n" />
+        </layout>
+        <param name="datePattern" value="Y-m-d"/>
+        <param name="file" value="bobsi_%s.log"/>
+    </appender>
+
+    <appender name="appenderMail" class="com\extremeidea\bidorbuy\storeintegrator\core\LoggerAppenderMail">
+        <layout class="com\extremeidea\php\tools\log4php\LoggerLayoutHtml"/>
+        <param name="from" value=""/>
+        <param name="to" value=""/>
+        <param name="subject" value="bidorbuy Store Integrator"/>
+    </appender>
+
+    <logger name="localFileLogger">
+        <appender_ref ref="appenderLocalFile"/>
+    </logger>
+
+    <logger name="localEmailLogger">
+        <appender_ref ref="appenderMail"/>
+    </logger>
+
+    <root/>
+</log4php:configuration>

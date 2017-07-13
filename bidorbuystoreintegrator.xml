@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="2.5" method="upgrade">
+    <name>bidorbuy Store Integrator</name>
+    <creationDate>2017-06-06</creationDate>
+    <author>Bidorbuy</author>
+    <authorUrl>www.bidorbuy.co.za</authorUrl>
+    <version>2.0.8</version>
+    <description>
+        The bidorbuy store integrator allows you to get products from your online store listed on bidorbuy quickly and
+        easily.
+    </description>
+
+    <scriptfile>script.php</scriptfile>
+
+    <files folder="site">
+        <filename>bidorbuystoreintegrator.php</filename>
+        <filename>bidorbuystoreintegratorClasses.php</filename>
+        <filename>bidorbuystoreintegratorCommon.php</filename>
+        <filename>controller.php</filename>
+        <filename>index.html</filename>
+    </files>
+
+    <params>
+        <param/>
+        <param name='installation' default="first"/>
+    </params>
+
+    <url addpath="/administrator/components/com_bidorbuystoreintegrator">
+        <param name='installation' default="first"/>
+    </url>
+
+    <administration>
+        <menu view="settings">COM_BIDORBUYSTOREINTEGRATOR</menu>
+
+        <files folder="admin">
+            <filename>bidorbuystoreintegrator.php</filename>
+            <filename>controller.php</filename>
+            <filename>index.html</filename>
+            <folder>assets</folder>
+            <folder>elements</folder>
+            <folder>models</folder>
+            <folder>vendor</folder>
+            <folder>views</folder>
+            <folder>extensions</folder>
+        </files>
+
+        <languages folder="admin">
+            <language tag="en-GB">language/en-GB/en-GB.com_bidorbuystoreintegrator.ini</language>
+            <language tag="en-GB">language/en-GB/en-GB.com_bidorbuystoreintegrator.menu.ini</language>
+            <language tag="en-GB">language/en-GB/en-GB.com_bidorbuystoreintegrator.sys.ini</language>
+        </languages>
+    </administration>
+</extension>

@@ -1,0 +1,107 @@
+.icon-48-bidorbuystoreintegrator {
+    background-image: url(../images/bidorbuy-icon.png);
+}
+
+.icon-32-download {
+    background-image: url(../images/download-icon.png);
+}
+
+.icon-32-refresh {
+    background-image: url(../images/refresh-icon.png);
+}
+
+.hasTip,
+ul li select,
+ul li input:not([type="checkbox"]) {
+    width: 250px;
+}
+
+.width-50 fieldset {
+    min-height: 280px;
+}
+
+#links input, #advanced input {
+    width: 100%;
+    max-width: 500px;
+}
+
+#ctrl-c-message {
+    display: none;
+    position: absolute;
+    text-align: center;
+    padding: 10px;
+    width: 120px;
+    background: #43D8FA;
+    color: white;
+    font-size: large;
+    border-radius: 8px;
+    z-index: 99999999;
+}
+
+table {
+    display:inline-block;
+    width:100%;
+}
+
+ul.adminformlist,
+ul.adminformlist li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fltlft {
+    float: left;
+}
+
+.fltrt {
+    float: right;
+}
+
+fieldset label, fieldset span.faux-label {
+    float: left;
+    clear: left;
+    display: block;
+    margin: 5px 0;
+    font-size: 1.091em;
+}
+
+div.width-100 {
+    width: 100%;
+}
+
+fieldset.panelform {
+    overflow: hidden;
+    clear: both;
+}
+
+li label, li input {
+    margin: 5px 0;
+}
+
+fieldset li, ol#property-values li {
+    list-style: none;
+    margin: 0;
+    padding: 5px;
+}
+
+fieldset ul {
+    margin: 0;
+    padding: 0;
+}
+
+fieldset.panelform label, fieldset.panelform div.paramrow label, fieldset.panelform span.faux-label {
+    min-width: 145px;
+    max-width: 250px;
+    padding: 0 5px 0 0;
+}
+
+#bob-settings div:first-child {
+    clear: left;
+}
+
+div.bobsi_resetaudit_desc {
+    width: 100%;
+    float: left;
+    padding-left: 20px;
+}
