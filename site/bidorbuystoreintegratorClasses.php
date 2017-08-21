@@ -133,7 +133,7 @@ class BidorbuyStoreIntegratorControllerVM2 extends BidorbuyStoreIntegratorContro
         return $products_slice;
     }
 
-    public function &exportProducts(&$productId, &$exportConfiguration = array()) {
+    public function exportProducts($productId, $exportConfiguration = array()) {
         $exportQuantityMoreThan = $this->bidorbuyStoreIntegrator->getSettings()->getExportQuantityMoreThan();
         $defaultStockQuantity = $this->bidorbuyStoreIntegrator->getSettings()->getDefaultStockQuantity();
 //        $exportActiveProducts = $this->bidorbuyStoreIntegrator->getSettings()->getExportActiveProducts() ? array(1) : array(0, 1);

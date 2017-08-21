@@ -208,3 +208,8 @@ window.addEvent('domready', function () {
     links.inject(debug,'before');
     logs.inject(debug,'bottom');
 });
+
+function saveButtonClick() {
+    savebutton = $('toolbar-publish').getElement('a');
+    savebutton.click();
+}

@@ -32,8 +32,10 @@ class Warnings {
      * @var array $businessWarnings contains business warnings
      */
     protected $businessWarnings = array(
-        "bidorbuy Store Integrator warning: bidorbuy will not support non SSL images URLs from June 2017 - any products with insecure content will not be exported. <a href='https://support.bidorbuy.co.za/Knowledgebase/Article/View/220/0/https-images-requirement'>More details</a>",
-    );
+        "bidorbuy Store Integrator warning: bidorbuy will not support non SSL images URLs from June 2017 - any products
+         with insecure content will not be exported. <a href=
+         'https://support.bidorbuy.co.za/Knowledgebase/Article/View/220/0/https-images-requirement'
+         target='_blank'>More details</a>",);
 
     /**
      * Add new warning in the system warning array

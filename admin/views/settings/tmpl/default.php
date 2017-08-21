@@ -181,6 +181,9 @@ foreach ($warnings as $warning) {
                     ?>
                 </li>
             </ul>
+            <div style="float:right; font-size: 14px">
+                <input type="button" onclick="saveButtonClick();" value="Save Settings">
+            </div>
         </fieldset>
     </div>
 </form>

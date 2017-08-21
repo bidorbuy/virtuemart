@@ -14,162 +14,158 @@
 
 namespace com\extremeidea\bidorbuy\storeintegrator\core;
 
-use com\extremeidea\php\tools\log4php as log4php;
 
-// Patch for Joomla 1.5 https://issues.apache.org/jira/browse/LOG4PHP-129
-if (function_exists('__autoload')) {
-    define('WARN_ON_AUTOLOAD_IGNORE', true);
-    spl_autoload_register('__autoload');
-}
+use Monolog\Formatter\HtmlFormatter;
+use Monolog\Logger as MonologLogger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\NativeMailerHandler;
 
-class LoggerAppenderDailyFile extends log4php\LoggerAppenderDailyFile {
-    public function __construct() {
-    }
-
-    public function setFile($file) {
-        parent::setFile(Settings::$logsPath . '/' . $file);
-    }
-}
-
-class LoggerAppenderMail extends log4php\LoggerAppenderMail {
-    public function setSubject($subject = '') {
-        $subject = Settings::$storeName . ' - ' . Version::$name;
-        parent::setSubject($subject);
-    }
-
-    public function setFrom($from = '') {
-        $from = Settings::$storeEmail;
-        parent::setFrom($from);
-    }
-
-    public function close() {
-        if ($this->closed != true) {
-            $from = $this->from;
-            $sendTo = $this->to;
-
-            if (!empty($this->body) and $from !== null and $sendTo !== null and $this->layout !== null) {
-                if (!$this->dry) {
-                    $message = $this->layout->getHeader() . $this->body . $this->layout->getFooter();
-                    $subject = $this->subject;
-                    $contentType = $this->layout->getContentType();
-
-                    $headers = "From: {$from}\r\n";
-                    $headers .= "Content-Type: {$contentType}\r\n";
-
-                    mail($sendTo, $subject, $message, $headers);
-                } elseif ($this->dry) {
-                    echo "DRY MODE OF MAIL APP.: Send mail to: " . $sendTo . " with content: " . $this->body;
-                }
-            }
-            $this->closed = true;
-        }
-    }
-}
-
+/**
+ * Class Logger.
+ *
+ * @package com\extremeidea\bidorbuy\storeintegrator\core
+ */
 class Logger {
-    private $settings;
-    private static $configured = false;
 
+    const LOGGER_NAME = 'bobsi';
+
+    private $settings;
+
+    protected $logger = NULL;
+
+    /**
+     * Logger constructor.
+     *
+     * @param Settings $settings settings
+     *
+     * @return mixed
+     */
     public function __construct(Settings $settings) {
         $this->settings = $settings;
-
-        if (self::$configured === false) {
-            self::$configured = true;
-            log4php\Logger::configure(dirname(__FILE__) . '/log4php.xml');
-        }
     }
 
-    public function getLogger($name) {
-        static $loggers;
+    /**
+     * Get logger instance.
+     *
+     * @return MonologLogger
+     */
+    public function getLogger() {
 
-        if (!$loggers) {
-            $loggers = array();
+        if (!$this->logger) {
+            $logName = Settings::$logsPath . '/' . sprintf("bobsi_%s.log", date('Y-m-d'));
+            $loggingLevel = $this->getLoggingLevel();
+            $this->logger = new MonologLogger(self::LOGGER_NAME);
+            $this->logger->pushHandler(new StreamHandler($logName, $loggingLevel));
+
+            return $this->logger;
         }
 
-        if (!isset($loggers[$name])) {
-            $loggers[$name] = log4php\Logger::getLogger($name);
-        }
+        return $this->logger;
+    }
 
-        $logger = &$loggers[$name];
+    /**
+     * Get Logging level
+     *
+     * @return int
+     */
+    protected function getLoggingLevel() {
         $level = $this->settings->getLoggingLevel();
 
         switch ($level) {
             case 'all':
-                $logger->setLevel(log4php\LoggerLevel::getLevelAll());
+                $loggerLevel = MonologLogger::INFO;
                 break;
             case 'fatal':
-                $logger->setLevel(log4php\LoggerLevel::getLevelFatal());
+                $loggerLevel = MonologLogger::CRITICAL;
                 break;
             case 'error':
-                $logger->setLevel(log4php\LoggerLevel::getLevelError());
+                $loggerLevel = MonologLogger::ERROR;
                 break;
             case 'warn':
-                $logger->setLevel(log4php\LoggerLevel::getLevelWarn());
+                $loggerLevel = MonologLogger::WARNING;
                 break;
             case 'info':
-                $logger->setLevel(log4php\LoggerLevel::getLevelInfo());
+                $loggerLevel = MonologLogger::INFO;
                 break;
             case 'debug':
-                $logger->setLevel(log4php\LoggerLevel::getLevelDebug());
+                $loggerLevel = MonologLogger::DEBUG;
                 break;
             case 'trace':
-                $logger->setLevel(log4php\LoggerLevel::getLevelTrace());
+                $loggerLevel = MonologLogger::INFO;
+                break;
+            default:
+                $loggerLevel = MonologLogger::INFO;
                 break;
         }
 
-        return $logger;
+        return $loggerLevel;
     }
 
-    public function log($level, $message) {
-        $localFileLogger = $this->getLogger('localFileLogger');
-
-        if (!class_exists('com\extremeidea\php\tools\log4php\LoggerLoggingEvent')) {
-            log4php\LoggerAutoloader::autoload('com\extremeidea\php\tools\log4php\LoggerLoggingEvent');
-        }
-
-        if (!class_exists('com\extremeidea\php\tools\log4php\LoggerNDC')) {
-            log4php\LoggerAutoloader::autoload('com\extremeidea\php\tools\log4php\LoggerNDC');
-        }
-
-        call_user_func_array(array($localFileLogger, $level), array($message));
-
-        $logging_email_notifications = $this->settings->getEnableEmailNotifications();
-        $logging_email_notifications_addresses = $this->settings->getEmailNotificationAddresses();
-
-        if ($logging_email_notifications && !empty($logging_email_notifications_addresses)) {
-            $localEmailLogger = $this->getLogger('localEmailLogger');
-
-            $appender = $localEmailLogger->getAppender('appenderMail');
-            $appender->setTo($logging_email_notifications_addresses);
-
-            $appender->setFrom();
-            $appender->setSubject();
-
-            call_user_func_array(array($localEmailLogger, $level), array($message));
-        }
+    /**
+     * Proxy function
+     *
+     * @param string $level legger function name etc: crit, err, warn for monolog v1.0
+     * @param string $message message to log
+     *
+     * @return void
+     */
+    protected function log($level, $message) {
+        $logger = $this->getLogger();
+        $logger->$level($message);
     }
 
+    /**
+     * Log fatal message
+     *
+     * @param string $message message to log
+     *
+     * @return void
+     */
     public function fatal($message) {
-        $this->log('fatal', $message);
+        $this->log('critical', $message);
     }
 
+    /**
+     * Log error message
+     *
+     * @param string $message message to log
+     *
+     * @return void
+     */
     public function error($message) {
         $this->log('error', $message);
     }
 
+    /**
+     * Log warning message
+     *
+     * @param string $message message to log
+     *
+     * @return void
+     */
     public function warning($message) {
-        $this->log('warn', $message);
+        $this->log('warning', $message);
     }
 
+    /**
+     * Log info message
+     *
+     * @param string $message message to log
+     *
+     * @return void
+     */
     public function info($message) {
         $this->log('info', $message);
     }
 
+    /**
+     * Log debug message
+     *
+     * @param string $message message to log
+     *
+     * @return void
+     */
     public function debug($message) {
         $this->log('debug', $message);
-    }
-
-    public function trace($message) {
-        $this->log('trace', $message);
     }
 }

@@ -26,11 +26,11 @@ class MySQLi extends Db {
      * Set DB settings
      * Function for override and use in tests
      *
-     * @param string $server server
-     * @param string $user user
+     * @param string $server   server
+     * @param string $user     user
      * @param string $password password
      * @param string $database db name
-     * @param string $port port
+     * @param string $port     port
      *
      * @return \mysqli
      */
@@ -47,14 +47,16 @@ class MySQLi extends Db {
      */
     public function connect() {
         if (!extension_loaded('mysqli')) {
-            $message = Version::$name . ' error: The "mysqli" required PHP extension is not installed or loaded. It is required to be installed.';
+            $message = Version::$name
+                . ' error: The "mysqli" required PHP extension is not installed or loaded. 
+                It is required to be installed.';
             $this->throwError($message);
         }
 
         $server = $this->server;
         $port = ini_get("mysqli.default_port");
 
-        if (strpos($this->server, ':') !== false) {
+        if (strpos($this->server, ':') !== FALSE) {
             list($server, $port) = explode(':', $this->server);
         }
 
@@ -68,6 +70,7 @@ class MySQLi extends Db {
         if ($this->link) {
             $this->removeFullGroupByMode();
         }
+
         return $this->link;
     }
 
@@ -90,18 +93,18 @@ class MySQLi extends Db {
      * @return mixed
      */
     public function setDb($dbName) {
-        return ($this->link) ? $this->link->query('USE ' . $this->escape($dbName, false)) : false;
+        return ($this->link) ? $this->link->query('USE ' . $this->escape($dbName, FALSE)) : FALSE;
     }
 
     /**
      * Execute a query and get result resource
      *
-     * @param string $sql query
-     * @param bool $unbuffered query type
+     * @param string $sql        query
+     * @param bool   $unbuffered query type
      *
      * @return mixed
      */
-    protected function queryInternal($sql, $unbuffered = null) {
+    protected function queryInternal($sql, $unbuffered = NULL) {
         return ($unbuffered) ? $this->link->query($sql, MYSQLI_USE_RESULT) : $this->link->query($sql);
     }
 
@@ -112,9 +115,9 @@ class MySQLi extends Db {
      *
      * @return array
      */
-    public function nextRow($result = null) {
+    public function nextRow($result = NULL) {
         if (!is_object($result)) {
-            return false;
+            return FALSE;
         }
 
         return $result->fetch_assoc();
@@ -128,12 +131,12 @@ class MySQLi extends Db {
      * @return string
      */
     public function escapeInternal($str) {
-        return ($this->link) ? $this->link->real_escape_string($str) : false;
+        return ($this->link) ? $this->link->real_escape_string($str) : FALSE;
     }
 
     /**
      * Get last DB error
-     * 
+     *
      * @return mixed
      */
     public function getLastError() {

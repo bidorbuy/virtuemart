@@ -16,7 +16,7 @@ namespace com\extremeidea\bidorbuy\storeintegrator\core;
 
 /**
  * Class Db
- * 
+ *
  * @package com\extremeidea\bidorbuy\storeintegrator\core
  */
 abstract class Db {
@@ -69,12 +69,12 @@ abstract class Db {
     /**
      * Instantiate database connection
      *
-     * @param string $server Server address
-     * @param string $user User login
+     * @param string $server   Server address
+     * @param string $user     User login
      * @param string $password User password
      * @param string $database Database name
-     * @param bool $connect If false, don't connect in constructor (since 1.5.0)
-     * 
+     * @param bool   $connect  If false, don't connect in constructor (since 1.5.0)
+     *
      * @return Db
      */
     public function __construct($server, $user, $password, $database, $connect) {
@@ -90,7 +90,7 @@ abstract class Db {
 
     /**
      * Destruct
-     * 
+     *
      * @return void
      */
     public function __destruct() {
@@ -108,16 +108,16 @@ abstract class Db {
 
     /**
      * Close a connection
-     * 
+     *
      * @return void
      */
-    abstract public function disconnect(); 
+    abstract public function disconnect();
 
     /**
      * Useful for some modules
      *
      * @param string $dbName database name
-     * 
+     *
      * @return mixed
      */
     abstract public function setDb($dbName);
@@ -125,12 +125,12 @@ abstract class Db {
     /**
      * Execute a query and get result resource
      *
-     * @param string $sql query
-     * @param bool $unbuffered query type
-     * 
+     * @param string $sql        query
+     * @param bool   $unbuffered query type
+     *
      * @return mixed
      */
-    public function query($sql, $unbuffered = null) {
+    public function query($sql, $unbuffered = NULL) {
         if (!$this->link) {
             $this->connect();
         }
@@ -142,24 +142,25 @@ abstract class Db {
         }
 
         $this->result = $this->queryInternal($sql, $unbuffered);
+
         return $this->result;
     }
 
     /**
      * Execute a query and get result resource
      *
-     * @param string $sql query
-     * @param bool $unbuffered query type
-     * 
+     * @param string $sql        query
+     * @param bool   $unbuffered query type
+     *
      * @return mixed
      */
-    abstract protected function queryInternal($sql, $unbuffered = null);
+    abstract protected function queryInternal($sql, $unbuffered = NULL);
 
     /**
      * Execute a query
      *
-     * @param string $sql query 
-     * 
+     * @param string $sql query
+     *
      * @return bool
      */
     public function execute($sql) {
@@ -168,16 +169,17 @@ abstract class Db {
         }
 
         $this->result = $this->query($sql);
+
         return $this->result;
     }
 
     /**
      * ExecuteS return the result of $sql as array
      *
-     * @param string $sql query to execute
+     * @param string  $sql   query to execute
      * @param boolean $array return an array instead of a mysql_result object
-     *     (deprecated since 1.5.0, use query method instead)
-     * 
+     *                       (deprecated since 1.5.0, use query method instead)
+     *
      * @return array or result object
      */
     public function executeS($sql, $array) {
@@ -190,11 +192,11 @@ abstract class Db {
             return $this->execute($sql);
         }
 
-        $this->result = false;
+        $this->result = FALSE;
         $this->result = $this->query($sql);
 
         if (!$this->result) {
-            return false;
+            return FALSE;
         }
 
         if (!$array) {
@@ -212,16 +214,18 @@ abstract class Db {
     /**
      * Get next row for a query which doesn't return an array
      *
-     * @param mixed $result
+     * @param mixed $result result
+     *
+     * @return mixed
      */
-    abstract public function nextRow($result = null);
+    abstract public function nextRow($result = NULL);
 
     /**
      * Sanitize data which will be injected into SQL query
      *
-     * @param string $string SQL data which will be injected into SQL query
+     * @param string  $string  SQL data which will be injected into SQL query
      * @param boolean $html_ok Does data contain HTML code ? (optional)
-     * 
+     *
      * @return string Sanitized data
      */
     public function escape($string, $html_ok) {
@@ -243,7 +247,7 @@ abstract class Db {
      * Convert \n and \r\n and \r to <br />
      *
      * @param string $str String to transform
-     * 
+     *
      * @return string New string
      */
     private function nl2br($str) {
@@ -251,12 +255,12 @@ abstract class Db {
     }
 
     /**
-     * Throw error function 
-     * 
-     * @param string $message error message 
-     * 
+     * Throw error function
+     *
+     * @param string $message error message
+     *
      * @throws \Exception
-     * 
+     *
      * @return void
      */
     public function throwError($message) {
@@ -265,8 +269,8 @@ abstract class Db {
 
     /**
      * Remove FULL_GROUP_BY mode
-     * 
-     * @return void 
+     *
+     * @return void
      */
     protected function removeFullGroupByMode() {
         $this->query("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));");
@@ -276,14 +280,14 @@ abstract class Db {
      * Protect string against SQL injections
      *
      * @param string $str string to escape
-     * 
+     *
      * @return string
      */
     abstract public function escapeInternal($str);
 
     /**
      * Get Last DB Error
-     * 
+     *
      * @return string
      */
     abstract public function getLastError();

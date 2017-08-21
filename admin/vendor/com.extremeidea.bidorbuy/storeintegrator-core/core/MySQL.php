@@ -14,13 +14,13 @@
 
 namespace com\extremeidea\bidorbuy\storeintegrator\core;
 
-/**
- * Deprecated
- *
- * @deprecated mysql extension was officially deprecated in PHP v5.5.0 and will
- *     be removed in PHP v7. http://php.net/manual/en/changelog.mysql.php we
- *     need to mute fatal deprecation errors.
- */
+    /**
+     * Deprecated
+     *
+     * @deprecated mysql extension was officially deprecated in PHP v5.5.0 and will
+     *     be removed in PHP v7. http://php.net/manual/en/changelog.mysql.php we
+     *     need to mute fatal deprecation errors.
+     */
 
 /**
  * Class MySQL
@@ -38,7 +38,9 @@ class MySQL extends Db {
      */
     public function connect() {
         if (!extension_loaded('mysql')) {
-            $message = Version::$name . ' error: The "mysql" required PHP extension is not installed or loaded. It is required to be installed.';
+            $message = Version::$name
+                . ' error: The "mysql" required PHP extension is not installed or loaded.
+                    It is required to be installed.';
             $this->throwError($message);
         }
 
@@ -78,18 +80,18 @@ class MySQL extends Db {
      * @return bool
      */
     public function setDb($dbName) {
-        return ($this->link) ? mysql_select_db($dbName, $this->link) : false;
+        return ($this->link) ? mysql_select_db($dbName, $this->link) : FALSE;
     }
 
     /**
      * Execute a query and get result resource
      *
-     * @param string $sql query
-     * @param bool $unbuffered query type
+     * @param string $sql        query
+     * @param bool   $unbuffered query type
      *
      * @return mixed
      */
-    protected function queryInternal($sql, $unbuffered = null) {
+    protected function queryInternal($sql, $unbuffered = NULL) {
         return ($unbuffered) ? mysql_unbuffered_query($sql, $this->link) : mysql_query($sql, $this->link);
     }
 
@@ -100,8 +102,8 @@ class MySQL extends Db {
      *
      * @return array
      */
-    public function nextRow($result = null) {
-        $return = false;
+    public function nextRow($result = NULL) {
+        $return = FALSE;
 
         if (is_resource($result) && $result) {
             $return = mysql_fetch_assoc($result);
@@ -121,10 +123,11 @@ class MySQL extends Db {
      */
     public function escapeInternal($str) {
         if ($this->link) {
-            return function_exists('mysql_real_escape_string') ? mysql_real_escape_string($str, $this->link) : addslashes($str);
+            return function_exists('mysql_real_escape_string') ? mysql_real_escape_string($str, $this->link)
+                : addslashes($str);
         }
 
-        return false;
+        return FALSE;
     }
 
     /**

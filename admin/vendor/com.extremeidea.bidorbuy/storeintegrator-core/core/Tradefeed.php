@@ -32,7 +32,7 @@ if (!defined('BOB_TRADEFEED_EOL')) {
     }
 }
 
-if (class_exists('\com\extremeidea\bidorbuy\storeintegrator\core\Tradefeed', false)) {
+if (class_exists('\com\extremeidea\bidorbuy\storeintegrator\core\Tradefeed', FALSE)) {
     return;
 }
 
@@ -88,33 +88,34 @@ class Tradefeed {
     private static $versionInstance;
 
     public static function createStartRootTag() {
-        return self::xmlVersion . BOB_TRADEFEED_EOL . self::tag(self::nameRoot, true);
+        return self::xmlVersion . BOB_TRADEFEED_EOL . self::tag(self::nameRoot, TRUE);
     }
 
     public static function createEndRootTag() {
-        return self::tag(self::nameRoot, false);
+        return self::tag(self::nameRoot, FALSE);
     }
 
     public static function createStartProductsTag() {
-        return self::tag(self::nameProducts, true, 1);
+        return self::tag(self::nameProducts, TRUE, 1);
     }
 
     public static function createEndProductsTag() {
-        return self::tag(self::nameProducts, false, 1);
+        return self::tag(self::nameProducts, FALSE, 1);
     }
 
     public static function createVersionSection() {
-        $output = self::section(self::nameUserId, 1, false, 2);
-        $output .= self::section(self::namePluginVersion, self::getLivePluginVersion(), true, 2);
-        $output .= self::section(self::nameSchemaVersion, '1.1', false, 2);
-        $output .= self::section(self::nameExportCreated, date('c'), false, 2);
+        $output = self::section(self::nameUserId, 1, FALSE, 2);
+        $output .= self::section(self::namePluginVersion, self::getLivePluginVersion(), TRUE, 2);
+        $output .= self::section(self::nameSchemaVersion, '1.1', FALSE, 2);
+        $output .= self::section(self::nameExportCreated, date('c'), FALSE, 2);
 
-        return self::section(self::nameVersion, $output, false, 1);
+        return self::section(self::nameVersion, $output, FALSE, 1);
     }
 
     public static function createProductSection(&$data, &$settings = array()) {
         if (is_array($data)) {
             $data = self::prepareProductArray($data, $settings);
+
             return self::buildXmlViewProduct($data);
         }
     }
@@ -126,7 +127,14 @@ class Tradefeed {
         for ($i = 1; $i <= $tabCount; $i++) {
             $tab .= "\t";
         }
-        return (strlen($section) == 0 ? '' : ($tab . '<' . $tag . '>' . ($cdata ? self::cdata($section) : (substr($section, 0, 1) == '<' || $forceNewLine ? BOB_TRADEFEED_EOL . $value . $tab : $value)) . '</' . $tag . '>') . BOB_TRADEFEED_EOL);
+
+        return (strlen($section) == 0
+            ? ''
+            : ($tab . '<' . $tag . '>' . ($cdata
+                    ? self::cdata($section)
+                    : (substr($section, 0, 1) == '<'
+                    || $forceNewLine ? BOB_TRADEFEED_EOL . $value . $tab : $value)) . '</' . $tag . '>')
+            . BOB_TRADEFEED_EOL);
     }
 
     private static function tag($tag, $open = 1, $tabCount = 0) {
@@ -134,6 +142,7 @@ class Tradefeed {
         for ($i = 1; $i <= $tabCount; $i++) {
             $tab .= "\t";
         }
+
         return $tab . '<' . ($open ? '' : '/') . $tag . '>' . BOB_TRADEFEED_EOL;
     }
 
@@ -161,18 +170,17 @@ class Tradefeed {
      */
     public static function prepareProductArray(&$data, &$settings = array()) {
 
-        $defaults = array(
-            self::nameProductCategory => null,
-            self::nameProductPrice => null,
-            self::nameProductMarketPrice => null,
-            self::nameProductAvailableQty => null,
-            self::nameProductImages => array(),
-        );
+        $defaults = array(self::nameProductCategory => NULL, self::nameProductPrice => NULL,
+            self::nameProductMarketPrice => NULL, self::nameProductAvailableQty => NULL,
+            self::nameProductImages => array(),);
 
         $data = array_merge($defaults, $data);
 
-        $nameExcludedAttributes = isset($settings[self::settingsNameExcludedAttributes]) ? $settings[self::settingsNameExcludedAttributes] : array();
-        $items = isset($settings[self::settingsNameAttributesOrder]) ? array_values($settings[self::settingsNameAttributesOrder]) : array();
+        $nameExcludedAttributes =
+            isset($settings[self::settingsNameExcludedAttributes]) ? $settings[self::settingsNameExcludedAttributes]
+                : array();
+        $items = isset($settings[self::settingsNameAttributesOrder])
+            ? array_values($settings[self::settingsNameAttributesOrder]) : array();
 
         $nameAttributesOrder = array_fill_keys($items, '');
 
@@ -196,7 +204,8 @@ class Tradefeed {
                 }
             }
 
-            $data[self::nameProductName] .= self::getTitleAppendix($data[self::nameProductAttributes], $nameExcludedAttributes);
+            $data[self::nameProductName] .= self::getTitleAppendix($data[self::nameProductAttributes],
+                $nameExcludedAttributes);
         }
 
         foreach ($nameAttributesOrder as $v) {
@@ -209,29 +218,34 @@ class Tradefeed {
                 $v = doubleval($value) > 0 ? $value . $units : '';
             }
 
-            $attributes .= self::section($k, $v, true, 4);
+            $attributes .= self::section($k, $v, TRUE, 4);
         }
 
         $data[self::nameProductAttributes] = $attributes;
 
-        $data[self::nameProductPrice] = isset($data[self::nameProductPrice]) && strlen($data[self::nameProductPrice]) > 0 ?
-            self::formatPrice($data[self::nameProductPrice]) : null;
+        $data[self::nameProductPrice] =
+            isset($data[self::nameProductPrice]) && strlen($data[self::nameProductPrice]) > 0
+                ? self::formatPrice($data[self::nameProductPrice]) : NULL;
 
-        $data[self::nameProductMarketPrice] = isset($data[self::nameProductMarketPrice]) && strlen($data[self::nameProductMarketPrice]) > 0 ?
-            self::formatPrice($data[self::nameProductMarketPrice]) : null;
+        $data[self::nameProductMarketPrice] =
+            isset($data[self::nameProductMarketPrice]) && strlen($data[self::nameProductMarketPrice]) > 0
+                ? self::formatPrice($data[self::nameProductMarketPrice]) : NULL;
 
-        $data[self::nameProductAvailableQty] = isset($data[self::nameProductAvailableQty]) && strlen($data[self::nameProductAvailableQty]) > 0 ?
-            intval(ceil($data[self::nameProductAvailableQty])) : null;
+        $data[self::nameProductAvailableQty] =
+            isset($data[self::nameProductAvailableQty]) && strlen($data[self::nameProductAvailableQty]) > 0
+                ? intval(ceil($data[self::nameProductAvailableQty])) : NULL;
 
         /* Product Condition */
-        $data[self::nameProductCondition] = isset($data[self::nameProductCondition]) ? $data[self::nameProductCondition] : self::conditionSecondhand;
+        $data[self::nameProductCondition] =
+            isset($data[self::nameProductCondition]) ? $data[self::nameProductCondition] : self::conditionSecondhand;
         $data[self::nameProductCondition] = self::setProductCondition($data[self::nameProductCondition]);
         /********************/
 
-        $fullDescription = self::swapSummaryDescription($data[self::nameProductSummary], $data[self::nameProductDescription]);
+        $fullDescription =
+            self::swapSummaryDescription($data[self::nameProductSummary], $data[self::nameProductDescription]);
 
-        $data[self::nameProductImageURL] = isset($data[self::nameProductImageURL]) ?
-            self::escapeImageUrl($data[self::nameProductImageURL]) : null;
+        $data[self::nameProductImageURL] =
+            isset($data[self::nameProductImageURL]) ? self::escapeImageUrl($data[self::nameProductImageURL]) : NULL;
 
         /* FEATURE 3909*/
         //self::excludeImagesWithHttp(self::escapeImageUrl($data[self::nameProductImageURL])) : null;
@@ -249,11 +263,13 @@ class Tradefeed {
 
         $baseURL = isset($data[self::nameBaseUrl]) ? $data[self::nameBaseUrl] : '';
 
-        $images = array_unique(array_merge($data[self::nameProductImages], self::getImagesFromDescription($fullDescription, $baseURL)));
+        $images = array_unique(array_merge($data[self::nameProductImages],
+            self::getImagesFromDescription($fullDescription, $baseURL)));
         /* FEATURE 3909*/
         //$data[self::nameProductImages] = self::excludeImagesWithHttp($images);
         /* END 3909   */
         $data[self::nameProductImages] = $images;
+
         return $data;
     }
 
@@ -274,27 +290,34 @@ class Tradefeed {
             $isUTF8 = mb_detect_encoding($summary, 'utf-8');
             $description = self::subString($description, 0, 8000, $isUTF8);
             $stripped = self::removeHtmlCharacters($summary);
-            $summary = self::subString((strlen($stripped) > 0 ? $stripped : self::removeHtmlCharacters($description)), 0, 500, $isUTF8);
+            $summary =
+                self::subString((strlen($stripped) > 0 ? $stripped : self::removeHtmlCharacters($description)), 0, 500,
+                    $isUTF8);
         }
+
         /*
          * return full description
          * @string
          */
+
         return $fullDescription;
     }
 
     /**
      * Helper function
-     * @param $string
-     * @param $start
-     * @param $length
-     * @param $encoding
+     *
+     * @param string $string string
+     * @param integer $start start pos
+     * @param integer $length max length
+     * @param string $encoding encoding
+     *
      * @return mixed
      */
     private static function subString($string, $start, $length, $encoding) {
         if ($encoding) {
             $string = mb_substr($string, $start, $length, $encoding);
-            $result = mb_strlen($string) == $length ? $string = mb_substr($string, $start, mb_strrpos($string, ' ', 0, $encoding), $encoding): $string;
+            $result = mb_strlen($string) == $length ?
+                $string = mb_substr($string, $start, mb_strrpos($string, ' ', 0, $encoding), $encoding) : $string;
 
             return $result;
         }
@@ -305,8 +328,16 @@ class Tradefeed {
         return $result;
     }
 
+    /**
+     * Format Price
+     *
+     * @param string $value value
+     *
+     * @return string
+     */
     public static function formatPrice($value) {
         $value = preg_replace('/[^0-9.-]/', '', $value);
+
         return !is_numeric($value) ? '' : number_format($value, 2, '.', '');
     }
 
@@ -341,30 +372,49 @@ class Tradefeed {
         return trim($clear);
     }
 
+    /**
+     * Escape image url
+     *
+     * @param string $imageUrl url
+     *
+     * @return string
+     */
     private static function escapeImageUrl($imageUrl) {
         if (isset($imageUrl) && strlen($imageUrl) > 0) {
             $urlComponents = parse_url($imageUrl);
-            $imageUrl = self::joinUrl($urlComponents, true);
+            $imageUrl = self::joinUrl($urlComponents, TRUE);
         }
 
         return $imageUrl;
     }
 
+    /**
+     * Join URL
+     *
+     * @param string $parts parts
+     * @param string $encode encode
+     *
+     * @return string
+     */
     private static function joinUrl($parts, $encode) {
         // TODO: add brackets for each condition
 
         if ($encode) {
-            if (isset($parts['user']))
+            if (isset($parts['user'])) {
                 $parts['user'] = rawurlencode($parts['user']);
+            }
 
-            if (isset($parts['pass']))
+            if (isset($parts['pass'])) {
                 $parts['pass'] = rawurlencode($parts['pass']);
+            }
 
-            if (isset($parts['host']) && !preg_match('!^(\[[\da-f.:]+\]])|([\da-f.:]+)$!ui', $parts['host']))
+            if (isset($parts['host']) && !preg_match('!^(\[[\da-f.:]+\]])|([\da-f.:]+)$!ui', $parts['host'])) {
                 $parts['host'] = rawurlencode($parts['host']);
+            }
 
-            if (!empty($parts['path']))
+            if (!empty($parts['path'])) {
                 $parts['path'] = preg_replace('!%2F!ui', '/', rawurlencode($parts['path']));
+            }
 
             if (isset($parts['query'])) {
                 $params = explode('=', $parts['query']);
@@ -375,50 +425,59 @@ class Tradefeed {
                 $parts['query'] = implode('=', $params);
             }
 
-            if (isset($parts['fragment']))
+            if (isset($parts['fragment'])) {
                 $parts['fragment'] = rawurlencode($parts['fragment']);
+            }
         }
 
         $url = '';
-        if (!empty($parts['scheme']))
+        if (!empty($parts['scheme'])) {
             $url .= $parts['scheme'] . ':';
+        }
 
         if (isset($parts['host'])) {
             $url .= '//';
 
             if (isset($parts['user'])) {
                 $url .= $parts['user'];
-                if (isset($parts['pass']))
+                if (isset($parts['pass'])) {
                     $url .= ':' . $parts['pass'];
+                }
                 $url .= '@';
             }
 
-            if (preg_match('!^[\da-f]*:[\da-f.:]+$!ui', $parts['host']))
-                $url .= '[' . $parts['host'] . ']'; // IPv6
-            else
-                $url .= $parts['host'];             // IPv4 or name
-
-            if (isset($parts['port']))
+            $url .=  (preg_match('!^[\da-f]*:[\da-f.:]+$!ui', $parts['host'])) ? 
+                '[' . $parts['host'] . ']' : $parts['host'];
+            
+            if (isset($parts['port'])) {
                 $url .= ':' . $parts['port'];
-            if (!empty($parts['path']) && $parts['path'][0] != '/')
+            }
+            if (!empty($parts['path']) && $parts['path'][0] != '/') {
                 $url .= '/';
+            }
         }
 
-        if (!empty($parts['path']))
+        if (!empty($parts['path'])) {
             $url .= $parts['path'];
+        }
 
-        if (isset($parts['query']))
+        if (isset($parts['query'])) {
             $url .= '?' . $parts['query'];
+        }
 
-        if (isset($parts['fragment']))
+        if (isset($parts['fragment'])) {
             $url .= '#' . $parts['fragment'];
+        }
 
         return $url;
     }
 
-    /** Returns string with attributes values in order to to use in the product title
+    /**
+     * Returns string with attributes values in order to to use in the product title
      *
-     * @param type $attributes
+     * @param array $attributes attributes
+     * @param array $excludedAttributes exclude attributes
+     *
      * @return string
      */
     public static function getTitleAppendix($attributes, $excludedAttributes = array()) {
@@ -445,10 +504,11 @@ class Tradefeed {
             }
         }
 
-        //Only one weight type (Weight or ShippingWeight) should come into a title. ShippingWeight should be added in case when Weight is not set.
+        //Only one weight type (Weight or ShippingWeight) should come into a title.
+        // ShippingWeight should be added in case when Weight is not set.
         $issetWeight = FALSE;
         $issetShippingWeight = FALSE;
-        $shippingWeightKey = null;
+        $shippingWeightKey = NULL;
         foreach ($titleAppendix as $key => $value) {
             if (array_key_exists(self::nameProductAttrWeight, $value)) {
                 $issetWeight = TRUE;
@@ -470,10 +530,13 @@ class Tradefeed {
         return '';
     }
 
-    /** Returns name of attribute. Some platforms allows to set many attributes with an identical name.
+    /**
+     * Returns name of attribute. Some platforms allows to set many attributes with an identical name.
      * Each one is coming inside a separate array to avoid the problem
      *
-     * @param array||string $name
+     * @param mixed $name name
+     * @param array $value value
+     *
      * @return string Returns name of attribute as a string
      */
     public static function getAttrName($name, $value) {
@@ -484,11 +547,13 @@ class Tradefeed {
         return $name;
     }
 
-    /** Returns scalar value of attribute. Some platforms allows to set many attributes with an identical name.
+    /**
+     * Returns scalar value of attribute. Some platforms allows to set many attributes with an identical name.
      * Each one is coming inside a separate array to avoid the problem
      *
-     * @param array||scalar $value
-     * @return scalar Returns scalar value of attribute
+     * @param mixed $value value
+     *
+     * @return mixed Returns scalar value of attribute
      */
     public static function getAttrValue($value) {
         if (is_array($value)) {
@@ -498,9 +563,11 @@ class Tradefeed {
         return $value;
     }
 
-    /** Returns units of measurable value (weight, length, width etc)
+    /**
+     * Returns units of measurable value (weight, length, width etc)
      *
      * @param string $value $value is a string like "10.698 kg"
+     *
      * @return string Units. For example: kg, lbs, m, km etc
      */
     public static function getUnits($value) {
@@ -524,16 +591,18 @@ class Tradefeed {
         }
 
         if (!empty($matches)) {
+            libxml_use_internal_errors(true);
             foreach ($matches[0] as $img) {
-                //We need to parse each <img> separately because DOMDocument() parses corrupted tags unobviously and unexpectedly if we are parsing whole $description.
+                //We need to parse each <img> separately because DOMDocument() parses corrupted tags unobviously
+                // and unexpectedly if we are parsing whole $description.
                 $doc = new \DOMDocument();
-                @$doc->loadHTML('<?xml encoding="UTF-8">' . $img);
+                $doc->loadHTML('<?xml encoding="UTF-8">' . $img);
 
                 $tags = $doc->getElementsByTagName('img');
 
                 foreach ($tags as $tag) {
                     $tmpImage = $tag->getAttribute('src');
-                    $images[] = strpos($tmpImage, 'data:image') === false ? $tmpImage : null;
+                    $images[] = strpos($tmpImage, 'data:image') === FALSE ? $tmpImage : NULL;
                 }
             }
         }
@@ -550,61 +619,79 @@ class Tradefeed {
         return $images;
     }
 
+    /**
+     * String Position
+     *
+     * @param string $haystack haystack
+     * @param string $needle needle
+     * @param mixed $encoding encoding
+     *
+     * @return mixed
+     */
     private static function strPosition($haystack, $needle, $encoding) {
         if ($encoding) {
             return mb_strpos($haystack, $needle);
         }
+
         return strpos($haystack, $needle);
     }
 
+    /**
+     * Is Measurable
+     * 
+     * @param string $valueName Value Name
+     *
+     * @return mixed
+     */
     public static function isMeasurable($valueName) {
-        return in_array(ucfirst($valueName), array(
-            self::nameProductAttrWidth,
-            self::nameProductAttrHeight,
-            self::nameProductAttrLength,
-            self::nameProductAttrDepth,
-            self::nameProductAttrWeight,
-            self::nameProductAttrShippingWeight));
+        return in_array(ucfirst($valueName),
+            array(self::nameProductAttrWidth, self::nameProductAttrHeight, self::nameProductAttrLength,
+                self::nameProductAttrDepth, self::nameProductAttrWeight, self::nameProductAttrShippingWeight));
     }
 
+    /**
+     * Build Xml View Product
+     * 
+     * @param array $data data
+     *
+     * @return string
+     */
     private static function buildXmlViewProduct(&$data) {
-        $output = self::section(self::nameProductId, $data[self::nameProductId], true, 3);
-        $output .= self::section(self::nameProductName, $data[self::nameProductName], true, 3);
-        $output .= self::section(self::nameProductCode, $data[self::nameProductCode], true, 3);
-        $output .= self::section(self::nameProductCategory, $data[self::nameProductCategory], true, 3);
-        $output .= self::section(self::nameProductPrice, $data[self::nameProductPrice], true, 3);
-        $output .= self::section(self::nameProductMarketPrice, $data[self::nameProductMarketPrice], true, 3);
-        $output .= self::section(self::nameProductAvailableQty, $data[self::nameProductAvailableQty], true, 3);
-        $output .= self::section(self::nameProductCondition, $data[self::nameProductCondition], false, 3);
-        $output .= self::section(self::nameProductAttributes, $data[self::nameProductAttributes], false, 3);
+        $output = self::section(self::nameProductId, $data[self::nameProductId], TRUE, 3);
+        $output .= self::section(self::nameProductName, $data[self::nameProductName], TRUE, 3);
+        $output .= self::section(self::nameProductCode, $data[self::nameProductCode], TRUE, 3);
+        $output .= self::section(self::nameProductCategory, $data[self::nameProductCategory], TRUE, 3);
+        $output .= self::section(self::nameProductPrice, $data[self::nameProductPrice], TRUE, 3);
+        $output .= self::section(self::nameProductMarketPrice, $data[self::nameProductMarketPrice], TRUE, 3);
+        $output .= self::section(self::nameProductAvailableQty, $data[self::nameProductAvailableQty], TRUE, 3);
+        $output .= self::section(self::nameProductCondition, $data[self::nameProductCondition], FALSE, 3);
+        $output .= self::section(self::nameProductAttributes, $data[self::nameProductAttributes], FALSE, 3);
 
         if (isset($data[self::nameProductShippingClass])) {
-            $output .= self::section(self::nameProductShippingClass, $data[self::nameProductShippingClass], true, 3);
+            $output .= self::section(self::nameProductShippingClass, $data[self::nameProductShippingClass], TRUE, 3);
         }
 
         if (isset($data[self::nameProductImageURL])) {
-            $output .= self::section(self::nameProductImageURL, $data[self::nameProductImageURL], true, 3);
+            $output .= self::section(self::nameProductImageURL, $data[self::nameProductImageURL], TRUE, 3);
         }
 
         if (isset($data[self::nameProductImages]) && is_array($data[self::nameProductImages])) {
             $outputImages = '';
             foreach ($data[self::nameProductImages] as $image) {
-                $outputImages .= self::section(self::nameProductImageURL, $image, true, 4);
+                $outputImages .= self::section(self::nameProductImageURL, $image, TRUE, 4);
             }
-            $output .= self::section(self::nameProductImages, $outputImages, false, 3);
+            $output .= self::section(self::nameProductImages, $outputImages, FALSE, 3);
         }
 
         $output .= self::section(self::nameProductSummary,
-            !empty($data[self::nameProductSummary]) ? $data[self::nameProductSummary] : $data[self::nameProductName], true, 3);
+            !empty($data[self::nameProductSummary]) ? $data[self::nameProductSummary] : $data[self::nameProductName],
+            TRUE, 3);
 
         $strippedDescription = strip_tags($data[self::nameProductDescription], '<img>');
-        $output .= self::section(
-            self::nameProductDescription,
-            !empty($strippedDescription) ? $data[self::nameProductDescription] : $data[self::nameProductName],
-            true, 3
-        );
+        $output .= self::section(self::nameProductDescription,
+            !empty($strippedDescription) ? $data[self::nameProductDescription] : $data[self::nameProductName], TRUE, 3);
 
-        return self::section(self::nameProduct, $output, false, 2);
+        return self::section(self::nameProduct, $output, FALSE, 2);
     }
 
     public static function getLivePluginVersion() {
@@ -642,17 +729,17 @@ class Tradefeed {
      * FEATURE 3909
      */
 
-//    /**
-//     * Check URL Schema. Https - true, else false
-//     * 
-//     * @param string $url URl to check
-//     * 
-//     * @return bool 
-//     */
-//    protected static function isHttps($url) {
-//        $urlScheme = parse_url($url, PHP_URL_SCHEME);
-//        return  $urlScheme == 'https' ? true : false;
-//    }
+    //    /**
+    //     * Check URL Schema. Https - true, else false
+    //     * 
+    //     * @param string $url URl to check
+    //     * 
+    //     * @return bool 
+    //     */
+    //    protected static function isHttps($url) {
+    //        $urlScheme = parse_url($url, PHP_URL_SCHEME);
+    //        return  $urlScheme == 'https' ? true : false;
+    //    }
 
     /**
      * Set product condition

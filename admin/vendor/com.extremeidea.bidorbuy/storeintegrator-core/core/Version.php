@@ -28,10 +28,11 @@ class Version {
     public static $platform = '';
 
     public static $id = 'bidorbuystoreintegrator';
-    public static $version = '2.0.8.20170606094222.33a7b8ae';
-    public static $coreVersion = '1.1.11.20170606081753.190f0116';
+    public static $version = '2.0.9.20170821213359.0237ed34';
+    public static $coreVersion = '1.1.14.20170821105631.35d9f246';
     public static $name = 'bidorbuy Store Integrator';
-    public static $description = 'The bidorbuy store integrator allows you to get products from your online store listed on bidorbuy quickly and easily.';
+    public static $description = 'The bidorbuy store integrator allows you to get products from your online store 
+    listed on bidorbuy quickly and easily.';
 
     public static $author = 'bidorbuy';
     public static $authorUrl = 'www.bidorbuy.co.za';
@@ -90,12 +91,14 @@ class Version {
     /**
      * Get only version from string
      *
-     * @param $str string which contains plugin version
+     * @param string $str string which contains plugin version
+     *
      * @return string version
      */
     public static function getVersionFromString($str) {
         $pattern = '/\d+(?:\.\d+)+/';
         preg_match($pattern, $str, $version);
+
         return $version[0];
     }
 }

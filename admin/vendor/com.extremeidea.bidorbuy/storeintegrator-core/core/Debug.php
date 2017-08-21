@@ -23,16 +23,19 @@ class Debug {
     const LOG_MODE_RANDOM = 'random';
     const LOG_MODE_NEW = 'new';
 
-    public $location = null;
+    public $location = NULL;
 
     /**
      * Writes debug information to temporary log file.
-     * @param $value value to log.
-     * @param string $mode write mode. One of the following: 'append' (default),
-     *     'new', 'random'
-     * @param string $type type of data to write. One of the following: 'json'
-     *     (default, json_encode), 'pr' (print_r), otherwise the data is written as
-     *     is.
+     *
+     * @param string $value value to log.
+     * @param string $mode  write mode. One of the following: 'append' (default),
+     *                      'new', 'random'
+     * @param string $type  type of data to write. One of the following: 'json'
+     *                      (default, json_encode), 'pr' (print_r), otherwise the data is written as
+     *                      is.
+     *
+     * @return mixed
      */
     public function log($value, $mode = self::LOG_MODE_APPEND, $type = self::LOG_TYPE_JSON) {
         $file = (empty($this->location) ? dirname(__FILE__) : $this->location) . '/debug';
@@ -46,7 +49,7 @@ class Debug {
                 $value = json_encode($value);
                 break;
             case self::LOG_TYPE_PRINTR :
-                $value = print_r($value, true);
+                $value = print_r($value, TRUE);
                 break;
             default:
                 if (is_array($value) || is_object($value)) {
@@ -56,7 +59,7 @@ class Debug {
         }
         $value .= "\n";
 
-        $flags = null;
+        $flags = NULL;
         if ($mode == self::LOG_MODE_APPEND) {
             $flags = FILE_APPEND;
         }
@@ -69,7 +72,7 @@ class Debug {
     /**
      * Converts string value to hex presentation.
      *
-     * @param string $string string to convert.
+     * @param string $string    string to convert.
      * @param string $delimiter delimiter.
      *
      * @return string hex presentation.
@@ -88,7 +91,7 @@ class Debug {
     /**
      * Converts string value from hex presentation to string.
      *
-     * @param string $hex string to convert.
+     * @param string $hex       string to convert.
      * @param string $delimiter delimiter.
      *
      * @return string presentation.

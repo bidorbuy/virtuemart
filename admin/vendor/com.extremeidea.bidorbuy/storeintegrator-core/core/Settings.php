@@ -104,243 +104,212 @@ class Settings {
     private $defaults;
 
     public function __construct() {
-        $this->defaults = array(
-            self::nameVersion => '1.0',
-            self::nameUsername => '',
-            self::namePassword => '',
-            self::nameCurrency => '',
-            self::nameFilename => 'tradefeed',
-            self::nameCompressLibrary => 'none',
-            self::nameDefaultStockQuantity => 5,
-            self::nameExportQuantityMoreThan => 0,
-            self::nameExportStatuses => array(),
-            self::nameExportVisibilities => array(),
-            self::nameExcludeCategories => array(),
-            self::nameEnableEmailNotifications => 0,
-            self::nameEmailNotificationAddresses => '',
-            self::nameLoggingLevel => 'error',
-            self::nameTokenDownload => self::generateToken(),
-            self::nameTokenExport => self::generateToken(),
-            /*
+        $this->defaults = array(self::nameVersion => '1.0', self::nameUsername => '', self::namePassword => '',
+            self::nameCurrency => '', self::nameFilename => 'tradefeed', self::nameCompressLibrary => 'none',
+            self::nameDefaultStockQuantity => 5, self::nameExportQuantityMoreThan => 0,
+            self::nameExportStatuses => array(), self::nameExportVisibilities => array(),
+            self::nameExcludeCategories => array(), self::nameEnableEmailNotifications => 0,
+            self::nameEmailNotificationAddresses => '', self::nameLoggingLevel => 'error',
+            self::nameTokenDownload => self::generateToken(), self::nameTokenExport => self::generateToken(), /*
              * Feature #3750
              */
-            self::nameExportProductSummary => true,
-            self::nameExportProductDescription => true,
+            self::nameExportProductSummary => TRUE, self::nameExportProductDescription => TRUE,
 
             /*
              * End Feature Block
              */
 
-            self::nameWordings => array(
-                self::nameUsername => array(
-                    self::nameWordingsTitle => 'Username',
-                    self::nameWordingsDescription => 'Please specify the username if your platform is protected by <a href=\'http://en.wikipedia.org/wiki/Basic_access_authentication\' target=\'_blank\'>Basic Access Authentication</a>',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return true;
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateTrue'),
-                ),
+            self::nameWordings => array(self::nameUsername => array(self::nameWordingsTitle => 'Username',
+                self::nameWordingsDescription => 'Please specify the username if your platform is protected by 
+                    <a href=\'http://en.wikipedia.org/wiki/Basic_access_authentication\' 
+                    target=\'_blank\'>Basic Access Authentication</a>',
+                //                    self::nameWordingsValidator => function ($value) {
+                //                        return true;
+                //                    },
+                self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                    'validateTrue'),),
                 self::namePassword => array(
                     self::nameWordingsTitle => 'Password',
-                    self::nameWordingsDescription => 'Please specify the password if your platform is protected by <a href=\'http://en.wikipedia.org/wiki/Basic_access_authentication\' target=\'_blank\'>Basic Access Authentication</a>',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return true;
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateTrue'),
-                ),
-                self::nameCurrency => array(
-                    self::nameWordingsTitle => 'Export currency',
+                    self::nameWordingsDescription => 'Please specify the password if your platform is protected by 
+                    <a href=\'http://en.wikipedia.org/wiki/Basic_access_authentication\' 
+                    target=\'_blank\'>Basic Access Authentication</a>',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return true;
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateTrue'),), self::nameCurrency => array(self::nameWordingsTitle => 'Export currency',
                     self::nameWordingsDescription => 'If not selected, the default currency is used.',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return true;
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateTrue'),
-                ),
-                self::nameFilename => array(
-                    self::nameWordingsTitle => 'Export filename',
-                    self::nameWordingsDescription => '16 characters max. Must start with a letter.<br>Can contain letters, digits, "-" and "_"',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return !empty($value) && strlen($value) <= 16 && preg_match('/^[a-z0-9]+([a-z0-9-_]+)?$/iD', $value);
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateNameFileName'),
-                ),
-                self::nameCompressLibrary => array(
-                    self::nameWordingsTitle => 'Compress Tradefeed XML',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return true;
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateTrue'),), self::nameFilename => array(self::nameWordingsTitle => 'Export filename',
+                    self::nameWordingsDescription => '16 characters max. Must start with a letter.<br>
+                    Can contain letters, digits, "-" and "_"', //self::nameWordingsValidator => function ($value) {
+                    //return !empty($value) && strlen($value)
+                    // <= 16 && preg_match('/^[a-z0-9]+([a-z0-9-_]+)?$/iD', $value);
+                    //},
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateNameFileName'),),
+                self::nameCompressLibrary => array(self::nameWordingsTitle => 'Compress Tradefeed XML',
                     self::nameWordingsDescription => 'Choose a Compress Library to compress destination Tradefeed XML',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return array_key_exists($value, Settings::getCompressLibraryOptions());
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateNameCompressLibrary'),
-                ),
-                self::nameDefaultStockQuantity => array(
-                    self::nameWordingsTitle => 'Min quantity in stock',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return array_key_exists($value, Settings::getCompressLibraryOptions());
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateNameCompressLibrary'),),
+                self::nameDefaultStockQuantity => array(self::nameWordingsTitle => 'Min quantity in stock',
                     self::nameWordingsDescription => 'Set minimum quantity if quantity management is turned OFF',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return is_numeric($value) && intval($value) >= 0;
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateNameDefaultStockQuantity'),
-                ),
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return is_numeric($value) && intval($value) >= 0;
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateNameDefaultStockQuantity'),),
                 self::nameExportQuantityMoreThan => array(
                     self::nameWordingsTitle => 'Export products with available quantity more than',
-                    self::nameWordingsDescription => 'Products with stock quantities lower than this value will be excluded from the XML feed',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return is_numeric($value) && intval($value) >= 0;
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateNameExportQuantityMoreThan'),
-                ),
-                self::nameExportStatuses => array(
-                    self::nameWordingsTitle => 'Export statuses',
+                    self::nameWordingsDescription => 'Products with stock quantities lower than this value will be 
+                                                        excluded from the XML feed',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return is_numeric($value) && intval($value) >= 0;
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateNameExportQuantityMoreThan'),),
+                self::nameExportStatuses => array(self::nameWordingsTitle => 'Export statuses',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return is_array($value);
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateIsArray'),
-                ),
-                self::nameExportVisibilities => array(
-                    self::nameWordingsTitle => 'Export visibilities',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return is_array($value);
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateIsArray'),),
+                self::nameExportVisibilities => array(self::nameWordingsTitle => 'Export visibilities',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return is_array($value);
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateIsArray'),
-                ),
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return is_array($value);
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateIsArray'),),
                 self::nameEnableEmailNotifications => array(
                     self::nameWordingsTitle => 'Turn on/off email notifications',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return is_bool($value);
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateIsBool'),
-                ),
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return is_bool($value);
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateIsBool'),),
                 self::nameEmailNotificationAddresses => array(
                     self::nameWordingsTitle => 'Send logs to email address(es)',
-                    self::nameWordingsDescription => 'Specify email address(es) separated by comma to send the log entries to',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return is_string($value);
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateIsString'),
-                ),
-                self::nameLoggingLevel => array(
-                    self::nameWordingsTitle => 'Logging Level',
-                    self::nameWordingsDescription => 'A level describes the severity of a logging message. There are six levels, show here in descending order of severity',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return in_array($value, Settings::getLoggingLevelOptions());
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateNameLoggingLevel'),
-                ),
-                self::nameExcludeCategories => array(
-                    self::nameWordingsTitle => 'Included Categories',
+                    self::nameWordingsDescription => 'Specify email address(es) separated by comma 
+                                                        to send the log entries to',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return is_string($value);
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateIsString'),),
+                self::nameLoggingLevel => array(self::nameWordingsTitle => 'Logging Level',
+                    self::nameWordingsDescription => 'A level describes the severity of a logging message. 
+                        There are six levels, show here in descending order of severity',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return in_array($value, Settings::getLoggingLevelOptions());
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateNameLoggingLevel'),),
+                self::nameExcludeCategories => array(self::nameWordingsTitle => 'Included Categories',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return is_array($value);
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateIsArray'),
-                ),
-                self::nameExportConfiguration => array(
-                    self::nameWordingsTitle => 'Export Configuration',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return is_array($value);
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateIsArray'),),
+                self::nameExportConfiguration => array(self::nameWordingsTitle => 'Export Configuration',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return true;
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateTrue'),
-                ),
-                self::nameExportCriteria => array(
-                    self::nameWordingsTitle => 'Export Criteria',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return true;
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateTrue'),),
+                self::nameExportCriteria => array(self::nameWordingsTitle => 'Export Criteria',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return true;
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateTrue'),
-                ),
-                self::nameExportLinks => array(
-                    self::nameWordingsTitle => 'Links',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return true;
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateTrue'),),
+                self::nameExportLinks => array(self::nameWordingsTitle => 'Links', self::nameWordingsDescription => '',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return true;
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateTrue'),),
+                self::nameExportUrl => array(self::nameWordingsTitle => 'Export', self::nameWordingsDescription => '',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return is_string($value) && !empty($value);
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateNotEmpty'),), self::nameDownloadUrl => array(self::nameWordingsTitle => 'Download',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return true;
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateTrue'),
-                ),
-                self::nameExportUrl => array(
-                    self::nameWordingsTitle => 'Export',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return is_string($value) && !empty($value);
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateNotEmpty'),),
+                self::nameButtonExport => array(self::nameWordingsTitle => 'Export Tradefeed',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return is_string($value) && !empty($value);
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateNotEmpty'),
-                ),
-                self::nameDownloadUrl => array(
-                    self::nameWordingsTitle => 'Download',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return true;
+                    //                    },
+                    self::nameWordingsValidator => array($this, '__validate_true'),),
+                self::nameButtonDownload => array(self::nameWordingsTitle => 'Download Tradefeed',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return is_string($value) && !empty($value);
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateNotEmpty'),
-                ),
-                self::nameButtonExport => array(
-                    self::nameWordingsTitle => 'Export Tradefeed',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return true;
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateTrue'),), self::nameButtonReset => array(self::nameWordingsTitle => 'Reset tokens',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return true;
-//                    },
-                    self::nameWordingsValidator => array($this, '__validate_true'),
-                ),
-                self::nameButtonDownload => array(
-                    self::nameWordingsTitle => 'Download Tradefeed',
+                    //                    self::nameWordingsValidator => function ($value) {
+                    //                        return true;
+                    //                    },
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateTrue'),), self::nameAdvancedSettings => array(self::nameWordingsTitle => 'Advanced',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return true;
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateTrue'),
-                ),
-                self::nameButtonReset => array(
-                    self::nameWordingsTitle => 'Reset tokens',
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateTrue'),),
+                self::nameActionResetExportTables => array(self::nameWordingsTitle => 'Reset export data',
+                    self::nameWordingsDescription => 'Clicking on this link will reset all exported data in your 
+                    tradefeed. This is done by clearing all exported product data, before re-adding all products 
+                    to the export and completing the query. Please note, you will still need to run the export 
+                    link once this process completes in order to update the download file.',
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        '__validate_not_empty'),),
+                self::nameButtonResetAudit => array(self::nameWordingsTitle => 'Launch',
                     self::nameWordingsDescription => '',
-//                    self::nameWordingsValidator => function ($value) {
-//                        return true;
-//                    },
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateTrue'),
-                ),
-                self::nameAdvancedSettings => array(
-                    self::nameWordingsTitle => 'Advanced',
-                    self::nameWordingsDescription => '',
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateTrue'),
-                ),
-                self::nameActionResetExportTables => array(
-                    self::nameWordingsTitle => 'Reset export data',
-                    self::nameWordingsDescription => 'Clicking on this link will reset all exported data in your tradefeed. This is done by clearing all exported product data, before re-adding all products to the export and completing the query. Please note, you will still need to run the export link once this process completes in order to update the download file.',
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', '__validate_not_empty'),
-                ),
-                self::nameButtonResetAudit => array(
-                    self::nameWordingsTitle => 'Launch',
-                    self::nameWordingsDescription => '',
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateTrue'),
-                ),
-                /*
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateTrue'),), /*
                  * Feature #3750
                  */
-                self::nameExportProductSummary => array(
-                    self::nameWordingsTitle => 'Export Product Summary',
+                self::nameExportProductSummary => array(self::nameWordingsTitle => 'Export Product Summary',
                     self::nameWordingsDescription => 'Check to export product summary to tradefeed',
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateIsBool'),
-                ),
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateIsBool'),),
 
-                self::nameExportProductDescription => array(
-                    self::nameWordingsTitle => 'Export Product Description',
+                self::nameExportProductDescription => array(self::nameWordingsTitle => 'Export Product Description',
                     self::nameWordingsDescription => 'Check to export product description to tradefeed',
-                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings', 'validateIsBool'),
-                ),
-                /*
+                    self::nameWordingsValidator => array('com\extremeidea\bidorbuy\storeintegrator\core\Settings',
+                        'validateIsBool'),),/*
                  * End Feature Block
-                 */
-            ),
-        );
+                 */),);
 
         $this->settings = $this->defaults;
         unset($this->settings[self::nameWordings]);
     }
 
+    /**
+     * Validate True
+     *
+     * @return bool
+     */
     public static function validateTrue() {
-        return true;
+        return TRUE;
     }
 
     public static function validateIsArray($value) {
@@ -398,13 +367,19 @@ class Settings {
         return $password;
     }
 
+    /**
+     * Set Password
+     *
+     * @param string $password password
+     *
+     * @return mixed
+     */
     public function setPassword($password) {
         if (!empty($password)
-            && strpos($password, self::namePasswordPrefix) === false
+            && strpos($password, self::namePasswordPrefix) === FALSE
         ) {
 
-            $this->settings[self::namePassword] =
-                self::namePasswordPrefix . base64_encode($password);
+            $this->settings[self::namePassword] = self::namePasswordPrefix . base64_encode($password);
         }
     }
 
@@ -416,12 +391,23 @@ class Settings {
         return $this->settings[self::nameFilename];
     }
 
+    /**
+     * Get Protected Extension
+     * 
+     * @return string
+     */
     public function getProtectedExtension() {
         return '.dat';
     }
 
+    /**
+     * Get Default Extension
+     *
+     * @return string
+     */
     public function getDefaultExtension() {
         $options = $this->getCompressLibraryOptions();
+
         return $options['none']['extension'] . $this->getProtectedExtension();
     }
 
@@ -561,13 +547,21 @@ class Settings {
                 return "/^{$this->getFilename()}\.[a-z0-9]+({$this->getDefaultExtension()})$/i";
                 break;
             default:
-                return "/^{$this->getFilename()}\.\d+({$this->getDefaultExtension()})|({$this->getProtectedExtension()})$/i";
+                return "/^{$this->getFilename()}\.\d+({$this->getDefaultExtension()})" .
+                "|({$this->getProtectedExtension()})$/i";
         }
     }
 
+    /**
+     * Get Compress Output File
+     *
+     * @return string
+     */
     public function getCompressOutputFile() {
         $options = $this->getCompressLibraryOptions();
-        return self::$dataPath . '/' . $this->getFilename() . $options[$this->getCompressLibrary()]['extension'] . $this->getProtectedExtension();
+
+        return self::$dataPath . '/' . $this->getFilename() . $options[$this->getCompressLibrary()]['extension']
+        . $this->getProtectedExtension();
     }
 
     /*
@@ -624,12 +618,11 @@ class Settings {
         $defaults = $this->defaults;
         unset($defaults[self::nameWordings]);
 
-        !is_array($settings) ?
-            $settings = $defaults : $settings = array_merge($defaults, $settings);
+        !is_array($settings) ? $settings = $defaults : $settings = array_merge($defaults, $settings);
 
 
         $password = $settings[self::namePassword];
-        if (!empty($password) && strpos($password, self::namePasswordPrefix) === false) {
+        if (!empty($password) && strpos($password, self::namePasswordPrefix) === FALSE) {
             $settings[self::namePassword] = self::namePasswordPrefix . base64_encode($password);
         }
 

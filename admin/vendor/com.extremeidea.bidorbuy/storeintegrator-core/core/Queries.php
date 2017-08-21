@@ -38,8 +38,8 @@ class Queries {
     /**
      * Queries constructor.
      *
-     * @param string $tablePrefix table prefix
-     * @param Tradefeed $tradefeed Tradefeed instance
+     * @param string    $tablePrefix table prefix
+     * @param Tradefeed $tradefeed   Tradefeed instance
      *
      * @return mixed
      */
@@ -75,9 +75,7 @@ class Queries {
               PRIMARY KEY (`id`)
               ";
 
-        return $this->createTable(
-            $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED, $tradefeedTable
-        );
+        return $this->createTable($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED, $tradefeedTable);
     }
 
     /**
@@ -92,9 +90,8 @@ class Queries {
             `description` varchar(8000),
             PRIMARY KEY (`product_id`)
             ";
-        return $this->createTable(
-            $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_TEXT, $descriptionTable
-        );
+
+        return $this->createTable($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_TEXT, $descriptionTable);
     }
 
     /**
@@ -112,15 +109,14 @@ class Queries {
             `row_status` char(1) NOT NULL DEFAULT '" . self::STATUS_NEW . "',
             PRIMARY KEY (`id`)
             ";
-        return $this->createTable(
-            $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT, $auditTable
-        );
+
+        return $this->createTable($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT, $auditTable);
     }
 
     /**
      * Get job queries
      *
-     * @param array $productIds product id's
+     * @param array  $productIds    product id's
      * @param string $productStatus new, delete, update
      *
      * @return string
@@ -136,11 +132,8 @@ class Queries {
             $data[] = array((int)$productsId, $productStatus, $date, $date);
         }
 
-        return $this->insert(
-            $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT,
-            array('product_id', 'product_status', 'row_created_on', 'row_updated_on'),
-            $data, false
-        );
+        return $this->insert($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT,
+            array('product_id', 'product_status', 'row_created_on', 'row_updated_on'), $data, FALSE);
     }
 
     /**
@@ -151,7 +144,8 @@ class Queries {
      * @return string
      */
     public function getDeleteJobs(array $ids) {
-        return $this->delete($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT, "`id` IN (" . implode(',', $ids) . ")");
+        return $this->delete($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT,
+            "`id` IN (" . implode(',', $ids) . ")");
     }
 
     /**
@@ -162,65 +156,70 @@ class Queries {
      * @return array of queries
      */
     public function getClearJobsQueries($timeStart) {
-        return array(
-            //delete all jobs marked as DELETE
-            'clear_finished_jobs' => $this->delete($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT, "`row_status` = '" . self::STATUS_DELETE . "'"),
+        return array(//delete all jobs marked as DELETE
+            'clear_finished_jobs' => $this->delete($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT,
+                "`row_status` = '" . self::STATUS_DELETE . "'"),
             //then mark jobs that not finished more that self::PRODUCT_PROCESS_TIMEOUT minutes ago as new.
-            'return_unfinished_jobs' => $this->update(
-                $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT,
-                array('product_status' => self::STATUS_UPDATE, 'row_updated_on' => date("Y-m-d H:i:s"), 'row_status' => self::STATUS_NEW),
-                "`row_status` = '" . self::STATUS_PROCESSING . "' AND `row_updated_on` < '" . date("Y-m-d H:i:s", $timeStart - self::PRODUCT_PROCESS_TIMEOUT) . "'"
-            )
-        );
+            'return_unfinished_jobs' => $this->update($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT,
+                array('product_status' => self::STATUS_UPDATE, 'row_updated_on' => date("Y-m-d H:i:s"),
+                    'row_status' => self::STATUS_NEW),
+                "`row_status` = '" . self::STATUS_PROCESSING . "' AND `row_updated_on` < '" . date("Y-m-d H:i:s",
+                    $timeStart - self::PRODUCT_PROCESS_TIMEOUT) . "'"));
     }
 
     /**
      * Set jobs
      *
-     * @param array $productsIds products ids
-     * @param string $status product status N, U, D
-     * @param integer $timeStart timestamp
+     * @param array   $productsIds products ids
+     * @param string  $status      product status N, U, D
+     * @param integer $timeStart   timestamp
      *
      * @return string
      */
     public function getSetJobsRowStatusQuery($productsIds, $status, $timeStart) {
-        return $this->update($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT, array('row_updated_on' => date("Y-m-d H:i:s"), 'row_status' => $status), "`product_id` IN (" . $productsIds . ") AND `row_created_on` < '" . date("Y-m-d H:i:s", $timeStart) . "'");
+        return $this->update($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT,
+            array('row_updated_on' => date("Y-m-d H:i:s"), 'row_status' => $status),
+            "`product_id` IN (" . $productsIds . ") AND `row_created_on` < '" . date("Y-m-d H:i:s", $timeStart) . "'");
     }
 
     /**
      * Get jobs status
      *
-     * @param string $status product status N, U, D
+     * @param string  $status    product status N, U, D
      * @param integer $timeStart timestamp
      *
      * @return string
      */
     public function getJobsByStatusQuery($status, $timeStart) {
-        return $this->select($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT, '`product_id` as id', "`row_status` = '" . self::STATUS_NEW . "' AND `product_status` = '" . $status . "' AND `row_created_on` < '" . date("Y-m-d H:i:s", $timeStart) . "'");
+        return $this->select($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT, '`product_id` as id',
+            "`row_status` = '" . self::STATUS_NEW . "' AND `product_status` = '" . $status
+            . "' AND `row_created_on` < '" . date("Y-m-d H:i:s", $timeStart) . "'");
     }
 
     /**
      * Insert products query
      *
-     * @param array $keys product columns
+     * @param array $keys   product columns
      * @param array $values product values
      *
      * @return string
      */
     public function getBulkInsertProductQuery(array $keys, array $values) {
-        return $this->insert($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED, $keys, $values, false);
+        return $this->insert($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED, $keys, $values, FALSE);
     }
 
     /**
      * Insert products summary & description
      *
-     * @param integer $pid product id
-     * @param array $values product values
+     * @param integer $pid    product id
+     * @param array   $values product values
      *
      * @return string
      */
     public function getInsertProductDataQuery($pid, array $values) {
-        return $this->insert($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_TEXT, array('product_id', 'summary', 'description'), array(array($pid, $values['summary'], $values['description'])), true);
+        return $this->insert($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_TEXT,
+            array('product_id', 'summary', 'description'),
+            array(array($pid, $values['summary'], $values['description'])), TRUE);
     }
 
     /**
@@ -240,7 +239,9 @@ class Queries {
      * @return string
      */
     public function getTradefeedDataQuery() {
-        return $this->select($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED, '`product_id`, `name`, `code`, `category`, `price`, `market_price`, `available_quantity`, `condition`, `attr_custom_attrs`, `shipping_product_class`, `image_url`, `summary`, `description`');
+        return $this->select($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED,
+            '`product_id`, `name`, `code`, `category`, `price`, `market_price`, `available_quantity`, `condition`, ' .
+            '`attr_custom_attrs`, `shipping_product_class`, `image_url`, `summary`, `description`');
     }
 
     /**
@@ -249,7 +250,9 @@ class Queries {
      * @return string
      */
     public function getDropTablesQuery() {
-        return $this->drop(array($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED, $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT, $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_TEXT));
+        return $this->drop(array($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED,
+            $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT,
+            $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_TEXT));
     }
 
     /**
@@ -260,12 +263,13 @@ class Queries {
      * @return string
      */
     public function getSelectUntouchedProducts($ids) {
-        return $this->select($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT, '`product_id` as id', "`product_id` IN (" . $ids . ") AND `row_status` = '" . self::STATUS_NEW . "'", true);
+        return $this->select($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_AUDIT, '`product_id` as id',
+            "`product_id` IN (" . $ids . ") AND `row_status` = '" . self::STATUS_NEW . "'", TRUE);
     }
 
     /**
      * Truncate Audit table
-     * 
+     *
      * @return string
      */
     public function getTruncateJobsQuery() {
@@ -295,32 +299,48 @@ class Queries {
         }
         $whereCategories = array();
         foreach ($categoryIds as $categoryId) {
-            $whereCategories[] = "t.`category_id` LIKE '%" . Tradefeed::categoryIdDelimiter . $categoryId . Tradefeed::categoryIdDelimiter . "%'";
+            $whereCategories[] = "t.`category_id` LIKE '%" . Tradefeed::categoryIdDelimiter . $categoryId
+                . Tradefeed::categoryIdDelimiter . "%'";
         }
         $query = array();
-        $query[] = $this->tradefeed->section(Tradefeed::nameProductId, "', t.`product_id`, '", true, 3) . "'";
-        $query[] = "'" . $this->tradefeed->section(Tradefeed::nameProductCode, "', t.`code`, '", true, 3) . "'";
-        $query[] = "'" . $this->tradefeed->section(Tradefeed::nameProductName, "', t.`name`, '", true, 3) . "'";
-        $query[] = "IF(LENGTH(t.`category`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductCategory, "', t.`category`, '", true, 3) . "'), '')";
-//        $query[] = "IF(t.`price` > 0, CONCAT('" . Tradefeed::section(Tradefeed::nameProductPrice, "', REPLACE(FORMAT(t.`price`, 0), ',', ''), '", true, 3) . "'), '')";
-//        $query[] = "IF(t.`market_price` > 0, CONCAT('" . Tradefeed::section(Tradefeed::nameProductMarketPrice, "', REPLACE(FORMAT(t.`market_price`, 0), ',', ''), '", true, 3) . "'), '')";
-        $query[] = "'" . $this->tradefeed->section(Tradefeed::nameProductPrice, "', REPLACE(FORMAT(t.`price`, 2), ',', ''), '", true, 3) . "'";
-        $query[] = "IF(t.`market_price` > 0, CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductMarketPrice, "', REPLACE(FORMAT(t.`market_price`, 2), ',', ''), '", true, 3) . "'), '')";
-        $query[] = "'" . $this->tradefeed->section(Tradefeed::nameProductAvailableQty, "', t.`available_quantity`, '", true, 3) . "'";
-        $query[] = "'" . $this->tradefeed->section(Tradefeed::nameProductCondition, "', t.`condition`, '", true, 3) . "'";
-        $query[] = "IF(LENGTH(t.`image_url`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductImageURL, "', t.`image_url`, '", true, 3) . "'), '')";
-        $query[] = "IF(LENGTH(t.`images`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductImages, "', t.`images`, '", false, 3, true) . "'), '')";
-        $query[] = "IF(LENGTH(au.`summary`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductSummary, "', au.`summary`, '", true, 3) . "'), '')";
-        $query[] = "IF(LENGTH(au.`description`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductDescription, "', au.`description`, '", true, 3) . "'), '')";
-        $query[] = "IF(LENGTH(t.`shipping_product_class`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductShippingClass, "', t.`shipping_product_class`, '", true, 3) . "'), '')";
-        $query[] = "IF(LENGTH(t.`attr_custom_attrs`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductAttributes, "', t.`attr_custom_attrs`, '", false, 3, true) . "'), ''),'";
+        $query[] = $this->tradefeed->section(Tradefeed::nameProductId, "', t.`product_id`, '", TRUE, 3) . "'";
+        $query[] = "'" . $this->tradefeed->section(Tradefeed::nameProductCode, "', t.`code`, '", TRUE, 3) . "'";
+        $query[] = "'" . $this->tradefeed->section(Tradefeed::nameProductName, "', t.`name`, '", TRUE, 3) . "'";
+        $query[] = "IF(LENGTH(t.`category`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductCategory,
+                "', t.`category`, '", TRUE, 3) . "'), '')";
+        $query[] =
+            "'" . $this->tradefeed->section(Tradefeed::nameProductPrice, "', REPLACE(FORMAT(t.`price`, 2), ',', ''), '",
+                TRUE, 3) . "'";
+        $query[] = "IF(t.`market_price` > 0, CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductMarketPrice,
+                "', REPLACE(FORMAT(t.`market_price`, 2), ',', ''), '", TRUE, 3) . "'), '')";
+        $query[] =
+            "'" . $this->tradefeed->section(Tradefeed::nameProductAvailableQty, "', t.`available_quantity`, '", TRUE, 3)
+            . "'";
+        $query[] =
+            "'" . $this->tradefeed->section(Tradefeed::nameProductCondition, "', t.`condition`, '", TRUE, 3) . "'";
+        $query[] = "IF(LENGTH(t.`image_url`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductImageURL,
+                "', t.`image_url`, '", TRUE, 3) . "'), '')";
+        $query[] = "IF(LENGTH(t.`images`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductImages,
+                "', t.`images`, '", FALSE, 3, TRUE) . "'), '')";
+        $query[] = "IF(LENGTH(au.`summary`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductSummary,
+                "', au.`summary`, '", TRUE, 3) . "'), '')";
+        $query[] =
+            "IF(LENGTH(au.`description`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductDescription,
+                "', au.`description`, '", TRUE, 3) . "'), '')";
+        $query[] = "IF(LENGTH(t.`shipping_product_class`), CONCAT('"
+            . $this->tradefeed->section(Tradefeed::nameProductShippingClass, "', t.`shipping_product_class`, '", TRUE,
+                3) . "'), '')";
+        $query[] =
+            "IF(LENGTH(t.`attr_custom_attrs`), CONCAT('" . $this->tradefeed->section(Tradefeed::nameProductAttributes,
+                "', t.`attr_custom_attrs`, '", FALSE, 3, TRUE) . "'), ''),'";
 
-        $query = $this->tradefeed->section(Tradefeed::nameProduct, join(',', $query), false, 2);
+        $query = $this->tradefeed->section(Tradefeed::nameProduct, join(',', $query), FALSE, 2);
         $query = "SELECT CONCAT('" . $query;
 
         $where = empty($whereCategories) ? '' : ' AND (' . join(' OR ', $whereCategories) . ')';
 
-        $query .= "') AS " . self::ROW_NAME . " FROM " . $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED . " AS t, " . $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_TEXT . " AS au
+        $query .= "') AS " . self::ROW_NAME . " FROM " . $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED . " AS t, "
+            . $this->tablePrefix . self::TABLE_BOBSI_TRADEFEED_TEXT . " AS au
             WHERE t.`product_id` = au.`product_id`" . $where . ' group by t.`code`';
 
         return $query;
@@ -339,21 +359,22 @@ class Queries {
      * Create table function
      *
      * @param string $tableName table name
-     * @param string $fields table field
+     * @param string $fields    table field
      *
      * @return string query
      */
     private function createTable($tableName, $fields) {
-        return "CREATE TABLE IF NOT EXISTS `$tableName` (" . $fields . ") ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+        return "CREATE TABLE IF NOT EXISTS `$tableName` (" . $fields
+        . ") ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci";
     }
 
     /**
      * Insert data into tables
      *
      * @param string $tableName table name
-     * @param array $keys Array of keys.
-     * @param array $values Array of arrays.
-     * @param bool $replace replace or insert
+     * @param array  $keys      Array of keys.
+     * @param array  $values    Array of arrays.
+     * @param bool   $replace   replace or insert
      *
      * @return string
      */
@@ -363,22 +384,24 @@ class Queries {
         foreach ($values as $value) {
             $data[] = "('" . join("','", $value) . "')";
         }
+
         return "$insert INTO `$tableName` (`" . join("`, `", $keys) . "`) VALUES " . join(', ', $data);
     }
 
     /**
      * Get data from tables
      *
-     * @param string $tableName table name
+     * @param string $tableName      table name
      * @param string $fieldsToSelect fields
-     * @param string $where The WHERE clause is used to filter records.
-     * @param int $isDistinct return only distinct (different) values
+     * @param string $where          The WHERE clause is used to filter records.
+     * @param int    $isDistinct     return only distinct (different) values
      *
      * @return string
      */
     private function select($tableName, $fieldsToSelect = '*', $where = '', $isDistinct = 0) {
         $isDistinct = $isDistinct ? 'DISTINCT' : '';
         $where = $where ? "WHERE $where" : "";
+
         return "SELECT $isDistinct $fieldsToSelect FROM `$tableName` $where";
     }
 
@@ -386,12 +409,13 @@ class Queries {
      * Delete data from tables
      *
      * @param string $tableName table name
-     * @param string $where The WHERE clause is used to filter records.
+     * @param string $where     The WHERE clause is used to filter records.
      *
      * @return string
      */
     private function delete($tableName, $where) {
         $where = $where ? "WHERE $where" : "";
+
         return "DELETE FROM `$tableName` $where";
     }
 
@@ -399,8 +423,8 @@ class Queries {
      * Update data in DB query
      *
      * @param string $tableName table name
-     * @param array $fields needed fields
-     * @param string $where The WHERE clause is used to filter records.
+     * @param array  $fields    needed fields
+     * @param string $where     The WHERE clause is used to filter records.
      *
      * @return string
      */
@@ -411,6 +435,7 @@ class Queries {
         foreach ($fields as $key => $field) {
             $set = "`$key` = '$field'";
         }
+
         return "UPDATE `$tableName` SET $set $where";
     }
 
@@ -425,6 +450,7 @@ class Queries {
         if (is_array($tableNames)) {
             $tableNames = "`" . join("`,`", $tableNames) . "`";
         }
+
         return "DROP TABLE IF EXISTS $tableNames";
     }
 }

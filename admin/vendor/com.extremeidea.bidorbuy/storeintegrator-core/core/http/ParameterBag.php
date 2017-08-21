@@ -52,20 +52,20 @@ class ParameterBag {
     /**
      * Returns a parameter by name.
      *
-     * @param string $key The key
-     * @param mixed $default The default value if the parameter key does not exist
+     * @param string $key     The key
+     * @param mixed  $default The default value if the parameter key does not exist
      *
      * @return mixed
      */
     public function get($key) {
-        return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : null;
+        return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : NULL;
     }
 
     /**
      * Sets a parameter by name.
      *
-     * @param string $key The key
-     * @param mixed $value The value
+     * @param string $key   The key
+     * @param mixed  $value The value
      *
      * @return void
      */

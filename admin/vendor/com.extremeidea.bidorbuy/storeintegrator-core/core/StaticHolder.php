@@ -26,14 +26,14 @@ class StaticHolder {
      *
      * @return Core
      */
-    private static $bidorbuyStoreIntegrator = null;
+    private static $bidorbuyStoreIntegrator = NULL;
 
     /**
      * Warnings Object
      *
      * @var Warnings $warnings contains system and bussines warnings from Warnings class
      */
-    public static $warnings = null;
+    public static $warnings = NULL;
 
 
     /**
@@ -42,7 +42,7 @@ class StaticHolder {
      * @return Core
      */
     public static function &getBidorbuyStoreIntegrator() {
-        if (null === static::$bidorbuyStoreIntegrator) {
+        if (NULL === static::$bidorbuyStoreIntegrator) {
             static::$bidorbuyStoreIntegrator = new Core();
         }
 
@@ -55,7 +55,7 @@ class StaticHolder {
      * @return Warnings
      */
     public static function getWarnings() {
-        if (null === static::$warnings) {
+        if (NULL === static::$warnings) {
             static::$warnings = new Warnings();
         }
 

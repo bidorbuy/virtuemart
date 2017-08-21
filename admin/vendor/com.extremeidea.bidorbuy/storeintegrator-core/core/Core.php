@@ -63,14 +63,14 @@ class Core {
      *
      * @var Queries $queries contains queries to DB
      */
-    private $queries = null;
+    private $queries = NULL;
 
     /**
      * Database resource
      *
      * @var Db $dbLink link to database
      */
-    protected $dbLink = null;
+    protected $dbLink = NULL;
 
     /**
      * Get queries object
@@ -136,25 +136,23 @@ class Core {
         $lastError = error_get_last();
         if (!is_null($lastError)) {
             $this->logFatal('
-            Fatal... type: ' . $lastError['type'] . ', message: ' . $lastError['message']
-                . ', file: ' . $lastError['file'] . ', line: ' . $lastError['line']
-            );
+            Fatal... type: ' . $lastError['type'] . ', message: ' . $lastError['message'] . ', file: '
+                . $lastError['file'] . ', line: ' . $lastError['line']);
         }
     }
 
     /**
      * Initialize core
      *
-     * @param string $storeName store name
+     * @param string $storeName  store name
      * @param string $storeEmail admin email
-     * @param string $platform CMS platform
-     * @param string $settings serialized settings stored in DB
-     * @param array $dbSettings array with settings
+     * @param string $platform   CMS platform
+     * @param string $settings   serialized settings stored in DB
+     * @param array  $dbSettings array with settings
      *
      * @return void
      */
-    public function init($storeName, $storeEmail, $platform,
-                         $settings = null, $dbSettings = null) {
+    public function init($storeName, $storeEmail, $platform, $settings = NULL, $dbSettings = NULL) {
         Settings::$storeName = strval($storeName);
         Settings::$storeEmail = strval($storeEmail);
 
@@ -162,14 +160,12 @@ class Core {
 
         if ($dbSettings) {
             $this->queries = new Queries($dbSettings[Db::SETTING_PREFIX], $this->tradefeed);
-            $this->dbLink = $this->getDbLinkInstance(
-                $dbSettings[Db::SETTING_SERVER], $dbSettings[Db::SETTING_USER],
-                $dbSettings[Db::SETTING_PASS], $dbSettings[Db::SETTING_DBNAME]
-            );
+            $this->dbLink = $this->getDbLinkInstance($dbSettings[Db::SETTING_SERVER], $dbSettings[Db::SETTING_USER],
+                $dbSettings[Db::SETTING_PASS], $dbSettings[Db::SETTING_DBNAME]);
         }
 
         if (!is_null($settings) && is_string($settings) && !empty($settings)) {
-            $this->settings->unserialize($settings, true);
+            $this->settings->unserialize($settings, TRUE);
         }
     }
 
@@ -195,14 +191,14 @@ class Core {
      * Hash data from array
      *
      * @param array $data array with data
+     *
      * @return string
      */
     public function shash($data = array()) {
         $hash = array();
         if (is_array($data)) {
             foreach ($data as $k => $v) {
-                $hash[] = $k . '::' . (empty($v) ?
-                        '[^:]+' : str_replace('/', '\/', $v));
+                $hash[] = $k . '::' . (empty($v) ? '[^:]+' : str_replace('/', '\/', $v));
             }
         }
 
@@ -213,10 +209,12 @@ class Core {
      * Validate request by token for download function, Refresh token
      *
      * @param string $token token from GET request
+     *
      * @return bool
      */
     public function canTokenDownload($token) {
         $token = trim($token);
+
         return !empty($token) && $token == $this->settings->getTokenDownload();
     }
 
@@ -224,10 +222,12 @@ class Core {
      * Validate request by token for export function
      *
      * @param string $token token from GET request
+     *
      * @return bool
      */
     public function canTokenExport($token) {
         $token = trim($token);
+
         return !empty($token) && $token == $this->settings->getTokenExport();
     }
 
@@ -235,7 +235,8 @@ class Core {
      * Choose action for Log section from request
      *
      * @param string $action action(download, remove) logs
-     * @param array $data contains log(s) file name
+     * @param array  $data   contains log(s) file name
+     *
      * @return array
      */
     public function processAction($action, $data = array()) {
@@ -249,10 +250,8 @@ class Core {
             if ($action == Settings::nameLoggingFormActionRemove) {
                 $this->deleteLogs($data[Settings::nameLoggingFormFilename]);
 
-                return array(
-                    empty($data[Settings::nameLoggingFormFilename]) ?
-                        'Log files successfully removed' : 'Log file ' . strip_tags($data[Settings::nameLoggingFormFilename]) . ' successfully removed!'
-                );
+                return array(empty($data[Settings::nameLoggingFormFilename]) ? 'Log files successfully removed'
+                    : 'Log file ' . strip_tags($data[Settings::nameLoggingFormFilename]) . ' successfully removed!');
             }
 
         }
@@ -265,12 +264,19 @@ class Core {
         return array();
     }
 
-    public function onRequestComplete(\MultiRequest_Request $request,
-                                      \MultiRequest_Handler $handler) {
+    /**
+     * Request complete
+     *
+     * @param \MultiRequest_Request $request request
+     * @param \MultiRequest_Handler $handler handler
+     *
+     * @return void
+     */
+    public function onRequestComplete(\MultiRequest_Request $request, \MultiRequest_Handler $handler) {
         $this->info2browser('', '<br/><br/>');
         $this->info2browser($request->getUrl());
         if ($request->getPostData()) {
-            $this->info2browser(json_encode($request->getPostData(), true));
+            $this->info2browser(json_encode($request->getPostData(), TRUE));
         }
         $this->info2browser('Response Code: ' . $request->getCode());
 
@@ -278,8 +284,7 @@ class Core {
         $this->info2browser($request->getContent());
 
         if ($request->getCode() != 200) {
-            $this->logError('Export with guid: ' . $this->guid
-                . ' failed on http error code: ' . $request->getCode());
+            $this->logError('Export with guid: ' . $this->guid . ' failed on http error code: ' . $request->getCode());
 
             $this->error2browser('Response Exception:');
             $this->error2browser($request->getFailException()->getMessage());
@@ -304,8 +309,11 @@ class Core {
             $this->callExit();
         }
 
-        if (isset($exportConfiguration[Settings::paramExtensions]) && is_array($exportConfiguration[Settings::paramExtensions])) {
-            $this->logInfo('Extensions: ' . implode('; ', array_values($exportConfiguration[Settings::paramExtensions])));
+        if (isset($exportConfiguration[Settings::paramExtensions])
+            && is_array($exportConfiguration[Settings::paramExtensions])
+        ) {
+            $this->logInfo('Extensions: ' . implode('; ',
+                    array_values($exportConfiguration[Settings::paramExtensions])));
         }
 
         if (isset($exportConfiguration[Settings::paramCategoryId])) {
@@ -318,9 +326,8 @@ class Core {
         $this->logInfo('Processing category ids: ' . implode(', ', $categories));
         $timeStart = time();
 
-        $this->dbLink ?
-            $this->exportFromNormalizedPlatforms($timeStart, $exportConfiguration) :
-            $this->exportFromUnnormalizedPlatforms($exportConfiguration);
+        $this->dbLink ? $this->exportFromNormalizedPlatforms($timeStart, $exportConfiguration)
+            : $this->exportFromUnnormalizedPlatforms($exportConfiguration);
 
         $timeFinish = time();
         $this->logInfo('Total export time is ' . ($timeFinish - $timeStart) . ' s');
@@ -338,6 +345,7 @@ class Core {
 
         if (isset($exportConfiguration[Settings::paramIds]) && $exportConfiguration[Settings::paramIds]) {
             $this->exportProductsInFile($exportConfiguration);
+
             return;
         }
 
@@ -352,14 +360,12 @@ class Core {
 
         if (empty($pids)) {
             $this->info2browser('Nothing to export.');
+
             return;
         }
 
         for ($i = count($productsIterations) - 1; $i >= 0; $i--) {
-            $urls[] = array(
-                'baseUrl' => $baseUrl,
-                Settings::paramIds => implode(',', $productsIterations[$i])
-            );
+            $urls[] = array('baseUrl' => $baseUrl, Settings::paramIds => implode(',', $productsIterations[$i]));
         }
 
         $this->launchMultiRequests($urls);
@@ -402,10 +408,12 @@ class Core {
         // updated any more after deleting. Such products are certainly deleted.
         $jobs[Queries::STATUS_NEW] = array_diff($jobs[Queries::STATUS_NEW], $jobs[Queries::STATUS_DELETE]);
 
-        $jobs[Queries::STATUS_UPDATE] = array_unique(array_diff($jobs[Queries::STATUS_UPDATE], $jobs[Queries::STATUS_DELETE]));
+        $jobs[Queries::STATUS_UPDATE] =
+            array_unique(array_diff($jobs[Queries::STATUS_UPDATE], $jobs[Queries::STATUS_DELETE]));
 
         //if product was found with "U" and "N" marks, we should left it only in one queue to avoid double processing
-        $jobs[Queries::STATUS_NEW] = array_unique(array_diff($jobs[Queries::STATUS_NEW], $jobs[Queries::STATUS_UPDATE]));
+        $jobs[Queries::STATUS_NEW] =
+            array_unique(array_diff($jobs[Queries::STATUS_NEW], $jobs[Queries::STATUS_UPDATE]));
 
         $this->logInfo('Products quantity for exporting: ' . count($jobs, COUNT_RECURSIVE));
 
@@ -422,13 +430,8 @@ class Core {
 
         //mark DEL jobs as finished
         if (!empty($jobs[Queries::STATUS_DELETE])) {
-            $this->dbLink->execute(
-                $this->queries->getSetJobsRowStatusQuery(
-                    implode(',', $jobs[Queries::STATUS_DELETE]),
-                    Queries::STATUS_DELETE,
-                    $this->timeStart
-                )
-            );
+            $this->dbLink->execute($this->queries->getSetJobsRowStatusQuery(implode(',', $jobs[Queries::STATUS_DELETE]),
+                Queries::STATUS_DELETE, $this->timeStart));
         }
 
         unset($jobs[Queries::STATUS_DELETE]);
@@ -448,6 +451,7 @@ class Core {
 
         if (empty($jobs[Queries::STATUS_NEW]) && empty($jobs[Queries::STATUS_UPDATE])) {
             $this->info2browser('Nothing to export.');
+
             return;
         }
 
@@ -470,62 +474,59 @@ class Core {
         $this->syncTimeLimit();
     }
 
+    /**
+     * Enable gc extension
+     *
+     * @return mixed
+     */
     private function gcEnable() {
         if (function_exists('gc_enable')) {
-            @gc_enable();
+            gc_enable();
         }
+
         return gc_enabled();
     }
 
+    /**
+     * Validate export request
+     *
+     * @param array $exportConfiguration config
+     *
+     * @return bool
+     */
     private function validateExportRequest($exportConfiguration) {
 
         $warnings = $this->getWarnings();
 
-        $validateRules = array(
-            array(
-                'result' => empty(Version::$platform),
-                'message' => 'platform is undefined.'
-            ),
-            array(
-                'result' => !isset($exportConfiguration[Settings::paramCallbackExportProducts]),
-                'message' => 'paramCallbackExportProducts is undefined.'
-            ),
+        $validateRules = array(array('result' => empty(Version::$platform), 'message' => 'platform is undefined.'),
+            array('result' => !isset($exportConfiguration[Settings::paramCallbackExportProducts]),
+                'message' => 'paramCallbackExportProducts is undefined.'),
 
-            array(
-                'result' => !isset($exportConfiguration[Settings::paramCallbackGetProducts]),
-                'message' => 'paramCallbackGetProducts is undefined.'
-            ),
+            array('result' => !isset($exportConfiguration[Settings::paramCallbackGetProducts]),
+                'message' => 'paramCallbackGetProducts is undefined.'),
 
-            array(
-                'result' => !isset($exportConfiguration[Settings::paramCallbackGetBreadcrumb]),
-                'message' => 'paramCallbackGetBreadcrumb is undefined.'
-            ),
+            array('result' => !isset($exportConfiguration[Settings::paramCallbackGetBreadcrumb]),
+                'message' => 'paramCallbackGetBreadcrumb is undefined.'),
 
-            array(
-                'result' => !isset($exportConfiguration[Settings::paramCategories])
-                    || (isset($exportConfiguration[Settings::paramCategories])
-                        && !is_array($exportConfiguration[Settings::paramCategories])),
-                'messsage' => 'paramCategories is undefined.'
-            ),
+            array('result' => !isset($exportConfiguration[Settings::paramCategories])
+                || (isset($exportConfiguration[Settings::paramCategories])
+                    && !is_array($exportConfiguration[Settings::paramCategories])),
+                'messsage' => 'paramCategories is undefined.'),
 
-            array(
-                'result' => !$this->request->server->get('REQUEST_URI'),
-                'message' => 'export should be called within application web server only.'
-            ),
+            array('result' => !$this->request->server->get('REQUEST_URI'),
+                'message' => 'export should be called within application web server only.'),
 
-            array(
-                'result' => !empty($warnings),
-                'message' => 'Errors: ' . implode('. ', $warnings)
-            )
-        );
+            array('result' => !empty($warnings), 'message' => 'Errors: ' . implode('. ', $warnings)));
 
         foreach ($validateRules as $validate) {
             if ($validate['result']) {
                 $this->error2browser($validate['message']);
-                return false;
+
+                return FALSE;
             }
         }
-        return true;
+
+        return TRUE;
     }
 
     /**
@@ -544,9 +545,8 @@ class Core {
             $this->show403Token($token);
         }
 
-        $this->dbLink == false ?
-            $this->unnormalizedPlatformsBuildFile() :
-            $this->normalizedPlatformsBuildFile($exportConfiguration);
+        $this->dbLink == FALSE ? $this->unnormalizedPlatformsBuildFile()
+            : $this->normalizedPlatformsBuildFile($exportConfiguration);
 
         $this->compressOutput();
         $compressLibrary = $this->settings->getCompressLibrary();
@@ -557,13 +557,8 @@ class Core {
                         \nTradefeed has not been generated.
                         \n At first generate tradefeed and then download.
                         ';
-        $this->downloadFileInternally(
-            $fileCompress,
-            $options[$compressLibrary]['mime-type'],
-            false,
-            $this->settings->cleanProtectedExtension($fileCompress),
-            $errorMessage
-        );
+        $this->downloadFileInternally($fileCompress, $options[$compressLibrary]['mime-type'], FALSE,
+            $this->settings->cleanProtectedExtension($fileCompress), $errorMessage);
 
         $this->callExit();
     }
@@ -584,27 +579,32 @@ class Core {
         fwrite($resource, $this->tradefeed->createStartProductsTag());
 
         $pagination = 100000; // implement pagination to prevent database disconnects
-        $count = $this->dbLink->executeS($this->queries->getXmlViewDataCountQuery(), true);
+        $count = $this->dbLink->executeS($this->queries->getXmlViewDataCountQuery(), TRUE);
+
         $count = ceil($count[0][Queries::ROW_NAME] / $pagination);
-
+        $productsCount = 0;
         for ($i = 0; $i < $count; $i++) {
-            $result = $this->dbLink->query($this->getQueries()
-                    ->getXmlViewDataQuery(
-                        $exportConfiguration[Settings::paramCategories]) . ' LIMIT ' .
-                $i * $pagination . ', ' . $pagination, true
-            );
+            $sqlQuery = $this->getQueries()->getXmlViewDataQuery(
+                    $exportConfiguration[Settings::paramCategories])
+                . ' LIMIT ' . $i * $pagination . ', ' . $pagination;
 
+            $result = $this->dbLink->query($sqlQuery, TRUE);
+            if (!$result) {
+                $this->logError("Database Error: {$this->dbLink->getLastError()}");
+                $this->logInfo("SQL query: {$sqlQuery}");
+            }
             while ($row = $this->dbLink->nextRow($result)) {
+                $productsCount++;
                 fwrite($resource, $row[Queries::ROW_NAME]);
             }
         }
-
+        $this->logInfo("Product pages: $count, products exported: $productsCount");
+        
         fwrite($resource, $this->tradefeed->createEndProductsTag());
         fwrite($resource, $this->tradefeed->createEndRootTag());
         fclose($resource);
 
-        $this->logInfo('XML File Generation Time: ' .
-            strval(time() - $this->timeStart) . " seconds.");
+        $this->logInfo('XML File Generation Time: ' . strval(time() - $this->timeStart) . " seconds.");
     }
 
     private function unnormalizedPlatformsBuildFile() {
@@ -664,7 +664,7 @@ class Core {
             $this->show403Token($token);
         }
 
-        $phpinfo === true ? $this->phpInfo() : $this->jsonMetrics();
+        $phpinfo === TRUE ? $this->phpInfo() : $this->jsonMetrics();
         $this->callExit();
     }
 
@@ -699,21 +699,13 @@ class Core {
 
         $dbExtension = $this->selectMySQLPhpExtension();
 
-        $extensions = array(
-            'curl' =>
-                '"curl" extension requires to be installed and enabled in PHP.',
+        $extensions = array('curl' => '"curl" extension requires to be installed and enabled in PHP.',
 
-            'mbstring' =>
-                '"mbstring" extension requires to be installed and enabled in PHP.',
+            'mbstring' => '"mbstring" extension requires to be installed and enabled in PHP.',
 
-            'libxml' =>
-                '"libxml" extension requires to be installed and enabled in PHP.',
+            'libxml' => '"libxml" extension requires to be installed and enabled in PHP.',
 
-            $dbExtension =>
-                '"'
-                . $dbExtension
-                . '" extension requires to be installed and enabled in PHP.'
-        );
+            $dbExtension => '"' . $dbExtension . '" extension requires to be installed and enabled in PHP.');
 
         foreach ($extensions as $extension => $errorMessage) {
             if (!$this->isExtensionLoaded($extension)) {
@@ -725,7 +717,9 @@ class Core {
         if (isset($disabledFunctions)) {
             $functions = explode(',', $disabledFunctions);
             if (in_array('readfile', $functions)) {
-                $warnings[] = 'Required PHP function "readfile" is disabled for security reasons (@see http://php.net/manual/en/ini.core.php#ini.disable-functions). Please contact your system administrator to get this function enabled.';
+                $warnings[] = 'Required PHP function "readfile" is disabled for security reasons '
+                    . '(@see http://php.net/manual/en/ini.core.php#ini.disable-functions). '
+                    . 'Please contact your system administrator to get this function enabled.';
             }
         }
 
@@ -736,18 +730,29 @@ class Core {
         return $warnings;
     }
 
+    /**
+     * Get Disabled functions
+     *
+     * @return mixed
+     */
     public function getPhpDisableFunctions() {
         return ini_get('disable_functions');
     }
 
-    public function downloadLogs($file = null) {
+    /**
+     * Download Log(s)
+     *
+     * @param mixed $file file name
+     *
+     * @return void
+     */
+    public function downloadLogs($file = NULL) {
         $this->logInfo('Download logs with file: ' . $file);
 
         // We should reset $filename to empty if zip extension is turned off
         // to let browser download empty file instead of error.
 
-        $filename = !is_null($file) && !empty($file) ?
-            (Settings::$logsPath . '/' . $file) : '';
+        $filename = !is_null($file) && !empty($file) ? (Settings::$logsPath . '/' . $file) : '';
 
         $this->logInfo('Download logs with filename: ' . $filename);
 
@@ -773,37 +778,41 @@ class Core {
             $success = $this->compress('zip', $destination, $files);
 
             $message = 'Compress logs is finished with status: ' . $success . ' : ';
-            file_exists($destination) ?
-                $this->logInfo($message . 'File exists.') : $this->logError($message . 'File does not exists.');
+            file_exists($destination) ? $this->logInfo($message . 'File exists.')
+                : $this->logError($message . 'File does not exists.');
 
             if ($success && file_exists($destination)) {
                 $options = $this->settings->getCompressLibraryOptions();
 
-                $this->downloadFileInternally(
-                    $destination,
-                    $options['zip']['mime-type'],
-                    true
-                );
+                $this->downloadFileInternally($destination, $options['zip']['mime-type'], TRUE);
             }
 
             $this->callExit();
         }
 
-        $this->downloadFileInternally($filename, 'text/plain', true);
+        $this->downloadFileInternally($filename, 'text/plain', TRUE);
 
         $this->callExit();
     }
 
-    public function deleteLogs($file = null) {
+    /**
+     * Delete Log(s)
+     *
+     * @param mixed $file file name
+     *
+     * @return void
+     */
+    public function deleteLogs($file = NULL) {
         $filename = !is_null($file) ? Settings::$logsPath . '/' . $file : '';
 
         if (is_null($file) || empty($file)) {
             $files = $this->scanForLogFiles();
             foreach ($files as $file) {
-                @unlink(Settings::$logsPath . '/' . $file['filename']); // Today's log file may be blocked and undeletable.
+                unlink(Settings::$logsPath . '/'
+                    . $file['filename']); // Today's log file may be blocked and undeletable.
             }
         } else if (file_exists($filename)) {
-            @unlink($filename);
+            unlink($filename);
         }
     }
 
@@ -816,10 +825,8 @@ class Core {
         $zipDownloadHtml = '';
         if (array_key_exists('zip', $this->settings->getCompressLibraryOptions())) {
             $zipDownloadHtml = '
-                <button type="button" class="button '
-                . Settings::nameLoggingFormButton . '" filename=""
-                action="' . Settings::nameLoggingFormActionDownload
-                . '">Download all</button>';
+                <button type="button" class="button ' . Settings::nameLoggingFormButton . '" filename=""
+                action="' . Settings::nameLoggingFormActionDownload . '">Download all</button>';
         }
 
         return '<form name="' . Settings::nameLoggingForm . '"
@@ -851,8 +858,12 @@ class Core {
     }
 
     /**
-     * @param string $productIds separated by comma
-     * @param array $exportConfiguration
+     * Export Products
+     *
+     * @param string $productIds          ids separated by comma
+     * @param array  $exportConfiguration configuration
+     *
+     * @return void
      */
     private function exportProducts($productIds, $exportConfiguration = array()) {
         $this->memory2browser();
@@ -861,22 +872,25 @@ class Core {
 
         $this->logInfo(count($productIdsArray) . ' products came to process: ' . $productIds);
 
-        $untouchedProductsArray = $this->dbLink->executeS(
-            $this->queries->getSelectUntouchedProducts($productIds), true
-        );
+        $untouchedProductsArray =
+            $this->dbLink->executeS($this->queries->getSelectUntouchedProducts($productIds), TRUE);
 
         foreach ($untouchedProductsArray as $k => $v) {
             $untouchedProductsArray[$k] = array_shift($v);
         }
         $untouchedProductsString = join(',', $untouchedProductsArray);
 
-        $this->logInfo('Processing ' . count($untouchedProductsArray) . ' products of ' . count($productIdsArray) . ': ' . $untouchedProductsString);
+        $this->logInfo('Processing ' . count($untouchedProductsArray) . ' products of ' . count($productIdsArray) . ': '
+            . $untouchedProductsString);
 
         //mark jobs as processing
-        $this->dbLink->execute($this->queries->getSetJobsRowStatusQuery($untouchedProductsString, Queries::STATUS_PROCESSING, $this->timeStart));
+        $this->dbLink->execute($this->queries->getSetJobsRowStatusQuery($untouchedProductsString,
+            Queries::STATUS_PROCESSING, $this->timeStart));
 
         //remove old products from tradefeed on update
-        if (!$exportConfiguration[Settings::paramProductStatus] OR $exportConfiguration[Settings::paramProductStatus] == Queries::STATUS_UPDATE) {
+        if (!$exportConfiguration[Settings::paramProductStatus] or $exportConfiguration[Settings::paramProductStatus]
+            == Queries::STATUS_UPDATE
+        ) {
             $this->removeProducts($untouchedProductsString, $exportConfiguration);
         }
 
@@ -885,33 +899,54 @@ class Core {
         time_nanosleep(1, 10000000);
 
         foreach ($untouchedProductsArray as $pid) {
-            $products = call_user_func($exportConfiguration[Settings::paramCallbackExportProducts], $r = &$pid, $r = &$exportConfiguration);
+            $products = call_user_func($exportConfiguration[Settings::paramCallbackExportProducts], $r = $pid,
+                $r = $exportConfiguration);
 
             if ($products && is_array($products) && !empty($products)) {
-                $productsData = array();
-                $keys = array_keys($this->buildArrayToInsert($productsData, false));
 
-                $fullDescription = $this->tradefeed->swapSummaryDescription(
-                    $products[Tradefeed::nameProductSummary],
-                    $products[Tradefeed::nameProductDescription]
-                );
+                /**
+                 * Defect #4409: Database error: bobsi plugins don't controlled data, that send to Core.
+                 * If product price <= 0, platforms pass array only with description, after saved description func do
+                 * unset and pass empty array to store in Database that cause Database error.
+                 *
+                 * Temporary fix in Core.
+                 */
+
+                if (count($products) == 2
+                    && array_key_exists(Tradefeed::nameProductSummary, $products)
+                    && array_key_exists(Tradefeed::nameProductDescription, $products)
+                ) {
+                    //Array contains only description product is absent
+                    $this->logger->warning(
+                        $this->guid
+                        . ': '
+                        . 'Defect #4409: Pass empty array to store in Database. Skipped...'
+                    ); // Log
+
+                    continue; // Skip
+                }
+
+                /**
+                 * End Defect 4409
+                 */
+
+                $productsData = array();
+                $keys = array_keys($this->buildArrayToInsert($productsData, FALSE));
+
+                $fullDescription = $this->tradefeed->swapSummaryDescription($products[Tradefeed::nameProductSummary],
+                    $products[Tradefeed::nameProductDescription]);
                 /**
                  * Add base url to images in description
                  * Platforms: Joomla.
-                 * @baseUrl contains on each variation,
-                 * by default get from first variation/
-                 *
+                 * baseUrl contains on each variation,
+                 * by default get from first variation
                  */
-                $baseURL = isset($products[0][Tradefeed::nameBaseUrl]) ?
-                    $products[0][Tradefeed::nameBaseUrl] : '';
+                $baseURL = isset($products[0][Tradefeed::nameBaseUrl]) ? $products[0][Tradefeed::nameBaseUrl] : '';
 
                 if (!empty($baseURL)) {
                     $products[Tradefeed::nameProductDescription] =
-                        preg_replace(
-                            '#(<img.*src=")([^http].*")(.*>)#isU',
-                            "$1$baseURL/$2$3",
-                            $products[Tradefeed::nameProductDescription]
-                        );
+                        preg_replace('#(<img.*src=")([^http].*")(.*>)#isU', "$1$baseURL/$2$3",
+                            $products[Tradefeed::nameProductDescription]);
                 }
                 /**
                  *  Add full description to product array, for parse product description
@@ -931,7 +966,7 @@ class Core {
                  * New conditions are added to Feature 3750, depending on the switch,
                  * where the user selects that need to export to a XML file
                  */
-                $productDataDescription = $this->buildArrayToInsert($products, true);
+                $productDataDescription = $this->buildArrayToInsert($products, TRUE);
                 $this->dbLink->execute($this->queries->getInsertProductDataQuery($pid, $productDataDescription));
                 /*
                  * End Feature
@@ -946,9 +981,9 @@ class Core {
                     }
 
                     $product = $this->tradefeed->prepareProductArray($product, $exportConfiguration);
-                    $productsData[] = $this->buildArrayToInsert($product, false);
-                    $products[$j] = null;
-                    $product = null;
+                    $productsData[] = $this->buildArrayToInsert($product, FALSE);
+                    $products[$j] = NULL;
+                    $product = NULL;
                 }
 
                 $this->dbLink->execute($this->queries->getBulkInsertProductQuery($keys, $productsData));
@@ -958,17 +993,12 @@ class Core {
                 $this->logInfo('Saved ' . count($products) . ' products to tradefeed');
                 $this->memory2browser();
             }
-            $products = null;
+            $products = NULL;
         }
 
         //mark jobs as finished
-        $this->dbLink->execute(
-            $this->queries->getSetJobsRowStatusQuery(
-                $untouchedProductsString,
-                Queries::STATUS_DELETE,
-                $this->timeStart
-            )
-        );
+        $this->dbLink->execute($this->queries->getSetJobsRowStatusQuery($untouchedProductsString,
+            Queries::STATUS_DELETE, $this->timeStart));
 
         $timeFinish = time();
         $this->logInfo('Processing product time is ' . ($timeFinish - $timeStart) . ' s');
@@ -992,7 +1022,8 @@ class Core {
 
         $exportedProductsCounter = 0;
 
-        $products = call_user_func($exportConfiguration[Settings::paramCallbackExportProducts], $param = &$pids, $param = &$exportConfiguration);
+        $products = call_user_func($exportConfiguration[Settings::paramCallbackExportProducts], $param = $pids,
+            $param = $exportConfiguration);
         if ($products && is_array($products) && !empty($products)) {
 
             $iteration = 1;
@@ -1006,7 +1037,7 @@ class Core {
                 fwrite($resource, $this->tradefeed->createProductSection($product, $exportConfiguration));
                 fflush($resource);
 
-                $product = null;
+                $product = NULL;
                 $iteration++;
             }
             unset($product);
@@ -1015,13 +1046,14 @@ class Core {
             $this->logInfo('Saved ' . count($products) . ' products to tradefeed');
             $this->memory2browser();
         }
-        $products = null;
+        $products = NULL;
 
         fclose($resource);
 
-        $status = @rename($file, $this->settings->getCategoryOutputFile(md5($exportConfiguration[Settings::paramIds])));
+        $status = rename($file, $this->settings->getCategoryOutputFile(md5($exportConfiguration[Settings::paramIds])));
         if (!$status) {
-            $this->logError('Unable to rename file from ' . basename($file) . ' to ' . basename($this->settings->getCategoryOutputFile(md5($exportConfiguration[Settings::paramIds]))));
+            $this->logError('Unable to rename file from ' . basename($file) . ' to '
+                . basename($this->settings->getCategoryOutputFile(md5($exportConfiguration[Settings::paramIds]))));
         }
 
         $timeFinish = time();
@@ -1033,14 +1065,36 @@ class Core {
         $this->callExit();
     }
 
+    /**
+     * Log info message
+     *
+     * @param string $message message
+     * @param mixed $data data to log
+     *
+     * @return void
+     */
     public function logInfo($message, $data = '') {
         $this->logger->info($this->guid . ': ' . $message . ' ' . $this->joinData($data));
     }
 
+    /**
+     * Log Error message
+     *
+     * @param string $message message
+     *
+     * @return void
+     */
     public function logError($message) {
         $this->logger->error($this->guid . ': ' . $message);
     }
 
+    /**
+     * Log fatal error
+     * 
+     * @param string $message message
+     *                        
+     * @return void
+     */
     public function logFatal($message) {
         $this->logger->fatal($this->guid . ': ' . $message);
     }
@@ -1059,7 +1113,14 @@ class Core {
         return $string;
     }
 
-    private function deleteCategoryOutputFiles($file = null) {
+    /**
+     * Delete Category Output Files
+     *
+     * @param null $file file name
+     *
+     * @return void
+     */
+    private function deleteCategoryOutputFiles($file = NULL) {
         $filename = !is_null($file) ? Settings::$dataPath . '/' . $file : '';
 
         if (is_null($file) || empty($file)) {
@@ -1103,9 +1164,11 @@ class Core {
             $filename = $file['filename'];
             $output .= '<tr><td>' . $i . '. ' . $filename . ' (' . $file['filesize'] . ')</td>';
             $output .= '<td><button class="button ' . Settings::nameLoggingFormButton . '"
-                               action="' . Settings::nameLoggingFormActionDownload . '" type="button" filename="' . $filename . '">Download</button>
+                               action="' . Settings::nameLoggingFormActionDownload . '" type="button" filename="'
+                . $filename . '">Download</button>
                        <button class="button ' . Settings::nameLoggingFormButton . '"
-                               action="' . Settings::nameLoggingFormActionRemove . '" type="button" filename="' . $filename . '">Remove</button></td>';
+                               action="' . Settings::nameLoggingFormActionRemove . '" type="button" filename="'
+                . $filename . '">Remove</button></td>';
         }
 
         return $output;
@@ -1121,7 +1184,9 @@ class Core {
 
         $logs = array();
         foreach ($files as $file) {
-            if (preg_match('/^bobsi_\d{4}\-\d{2}\-\d{2}\.log$/i', $file) && is_file(Settings::$logsPath . '/' . $file)) {
+            if (preg_match('/^bobsi_\d{4}\-\d{2}\-\d{2}\.log$/i', $file)
+                && is_file(Settings::$logsPath . '/' . $file)
+            ) {
                 $filesize = $this->formatbytes(Settings::$logsPath . '/' . $file, 'MB');
 
                 $sizeOfFile = filesize(Settings::$logsPath . '/' . $file);
@@ -1130,7 +1195,7 @@ class Core {
                 if ($sizeOfFile > (1024 * 1000)) {
                     $filesize = number_format($sizeOfFile / 1024 / 1024, 2, ',', ' ') . ' MB';
                 }
-//                $logs[] = array('filename' => $file, 'filesize' => number_format((float)$filesize, 2, ',', ' ') . ' MB');
+
                 $logs[] = array('filename' => $file, 'filesize' => $filesize);
             }
         }
@@ -1146,10 +1211,7 @@ class Core {
         $fileCompress = $this->settings->getCompressOutputFile();
 
         $status = $this->compress($this->settings->getCompressLibrary(), $fileCompress,
-            array(
-                array('file' => $file, 'basename' => basename($this->settings->cleanProtectedExtension($file)))
-            )
-        );
+            array(array('file' => $file, 'basename' => basename($this->settings->cleanProtectedExtension($file)))));
 
         $timeFinish = time();
         $this->logInfo('Compress time is ' . ($timeFinish - $timeStart) . ' s');
@@ -1160,9 +1222,9 @@ class Core {
      * Compress files in archive
      *(Logs, tradefeed)
      *
-     * @param string $type type of archive(zip, gz)
+     * @param string $type        type of archive(zip, gz)
      * @param string $destination archive name, path
-     * @param array $files files to archive
+     * @param array  $files       files to archive
      *
      * @return bool true - OK, false - error
      */
@@ -1171,15 +1233,17 @@ class Core {
 
         if (!in_array($type, array_keys($this->settings->getCompressLibraryOptions()))) {
             $this->logError('Unable to detect compress library: ' . $type);
-            return false;
+
+            return FALSE;
         }
 
         if (!is_array($files)) {
             $this->logError('Unable to cast files variable type to array type.');
-            return false;
+
+            return FALSE;
         }
 
-        $status = true;
+        $status = TRUE;
 
         switch ($type) {
             case 'zip':
@@ -1197,7 +1261,7 @@ class Core {
      * Compress in zip archive
      *
      * @param string $destination archive name and path
-     * @param array $files files to archive
+     * @param array  $files       files to archive
      *
      * @return bool true - ok, false - error
      */
@@ -1206,7 +1270,8 @@ class Core {
 
         if (!$zip->open($destination, \ZipArchive::CREATE | \ZipArchive::OVERWRITE)) {
             $this->logError('Unable to create zip destination: ' . $destination);
-            return false;
+
+            return FALSE;
         }
 
         $errors = 0;
@@ -1229,14 +1294,14 @@ class Core {
         }
         $this->logInfo('zip is created, count of errors: ' . $errors);
 
-        return true && !$errors;
+        return TRUE && !$errors;
     }
 
     /**
      * Compress in Gzip
      *
      * @param string $destination archive name and path
-     * @param array $files files to archive
+     * @param array  $files       files to archive
      *
      * @return bool true - ok, false - error
      */
@@ -1245,7 +1310,8 @@ class Core {
 
         if (!$out) {
             $this->logError('Unable to create gzip destination: ' . $destination);
-            return false;
+
+            return FALSE;
         }
 
         $errors = 0;
@@ -1276,7 +1342,8 @@ class Core {
         }
 
         $this->logInfo('gzip is created, count of errors: ' . $errors);
-        return true && !$errors;
+
+        return TRUE && !$errors;
     }
 
     private function downloadFileInternally($file, $contentType, $unlink, $changeFileName = '', $errorMessage = '') {
@@ -1300,11 +1367,10 @@ class Core {
         $zlib = ini_get("zlib.output_compression");
         $zlib_enabled = intval($zlib) > 0 || strcasecmp($zlib, 'on') == 0;
 
-        $isCsCartWithGzipEnabled =
-            defined('AREA')
+        $isCsCartWithGzipEnabled = defined('AREA')
             && !$zlib_enabled
             && $this->request->server->get('HTTP_ACCEPT_ENCODING')
-            && strpos($this->request->server->get('HTTP_ACCEPT_ENCODING'), 'gzip') !== false;
+            && strpos($this->request->server->get('HTTP_ACCEPT_ENCODING'), 'gzip') !== FALSE;
 
         header('Content-Description: File Transfer');
         header('Content-Type: ' . $contentType);
@@ -1316,7 +1382,7 @@ class Core {
         if (!$isCsCartWithGzipEnabled) {
             header('Content-Length: ' . $this->getFileSize($file));
         }
-        
+
         /* Defect: #4124 */
         $this->addZlibHeaders($zlib_enabled);
         /*  ***  */
@@ -1332,8 +1398,9 @@ class Core {
         }
 
         if (!$isCsCartWithGzipEnabled) {
-//              http://php.net/manual/en/function.readfile.php
-//              readfile() will not present any memory issues, even when sending large files, on its own. If you encounter an out of memory error ensure that output buffering is off with ob_get_level().
+            //http://php.net/manual/en/function.readfile.php
+            //readfile() will not present any memory issues, even when sending large files, on its own.
+            // If you encounter an out of memory error ensure that output buffering is off with ob_get_level().
             if (ob_get_level()) {
                 // ob_end_clean Clean (erase) the output buffer and turn off output buffering
                 // ob_clean Clean (erase) the output buffer
@@ -1347,11 +1414,11 @@ class Core {
         readfile($file);
 
         if ($isCsCartWithGzipEnabled) {
-//              The specific workaround for cscart, because it uses ob_gzhandler buffer (http://stackoverflow.com/questions/20332598/php-ob-gzhandler-setting-content-length-disables-gzipped-output)
+            //              The specific workaround for cscart, because it uses ob_gzhandler buffer (http://stackoverflow.com/questions/20332598/php-ob-gzhandler-setting-content-length-disables-gzipped-output)
             ob_get_flush(); // Flush the output from ob_gzhandler
 
-//              We need to suppress warning "headers already sent" by @, no other ways available how to get around it ((.
-            @header('Content-Length: ' . ob_get_length());
+            //We need to suppress warning "headers already sent" by @, no other ways available how to get around it ((.
+            header('Content-Length: ' . ob_get_length());
             if (ob_get_level() > 0) {
                 ob_end_flush(); // Flush the outer ob_start()
             }
@@ -1370,7 +1437,8 @@ class Core {
         $mrHandler->setConnectionsLimit(4);
 
         $headers = array();
-        $headers[] = 'Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
+        $headers[] = 'Accept: text/xml,application/xml,application/xhtml+xml,text/html;
+            q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
         $headers[] = 'Cache-Control: no-cache';
         $headers[] = 'Connection: Keep-Alive';
         $headers[] = 'Keep-Alive: 300';
@@ -1380,7 +1448,8 @@ class Core {
         $mrHandler->requestsDefaults()->addHeaders($headers);
 
         $options = array();
-        $options[CURLOPT_USERAGENT] = 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12';
+        $options[CURLOPT_USERAGENT] =
+            'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12';
 
         $username = $this->settings->getUsername();
         if (!empty($username)) {
@@ -1391,9 +1460,8 @@ class Core {
         $serverName = $this->getServerName();
         $ipaAdress = gethostbyname($serverName);
 
-        $ipaAdress == $serverName ?
-            $this->error2browser('Unable to resolve host name: ' . $serverName) :
-            $this->info2browser('Resolved host name: ' . $serverName . ' via ' . $ipaAdress);
+        $ipaAdress == $serverName ? $this->error2browser('Unable to resolve host name: ' . $serverName)
+            : $this->info2browser('Resolved host name: ' . $serverName . ' via ' . $ipaAdress);
 
 
         if ($this->dbLink) {
@@ -1406,6 +1474,7 @@ class Core {
                 }
             }
             $mrHandler->start();
+
             return;
         }
 
@@ -1422,9 +1491,14 @@ class Core {
         $mrHandler->start();
     }
 
+    /**
+     * Show memory usage
+     *
+     * @return void
+     */
     private function memory2browser() {
         $this->logInfo('Memory usage: ' . memory_get_usage() . ' bytes');
-//        $this->info2browser('Memory usage: ' . memory_get_usage() . ' bytes');
+        //        $this->info2browser('Memory usage: ' . memory_get_usage() . ' bytes');
         flush();
     }
 
@@ -1449,12 +1523,22 @@ class Core {
      */
     private function ssga($url) {
         $ssga = new GA(base64_decode(self::EIGAKEY));
-        $ssga->setEvent('bob-' . substr(Version::$platform, 0, strpos(Version::$platform, ' ')), $this->version->getLivePluginVersion(), $url);
+        $ssga->setEvent('bob-' . substr(Version::$platform, 0, strpos(Version::$platform, ' ')),
+            $this->version->getLivePluginVersion(), $url);
         $ssga->send();
         $ssga->reset();
+
         return $ssga;
     }
 
+    /**
+     * Format bytes
+     *
+     * @param resource $file file
+     * @param string $type type
+     *
+     * @return int|string
+     */
     private function formatbytes($file, $type) {
         switch ($type) {
             case "KB":
@@ -1476,16 +1560,23 @@ class Core {
     }
 
     /**
+     * Get server name.
+     *
      * @return string
      */
     private function getServerName() {
-        return $this->request->server->get('HTTP_HOST') ?:
-            $this->request->server->get('SERVER_NAME') ?: '';
+        return $this->request->server->get('HTTP_HOST') ?: $this->request->server->get('SERVER_NAME') ?: '';
     }
 
+    /**
+     * Check is https usage
+     *
+     * @return bool
+     */
     public function isHTTPS() {
         $https = $this->request->server->get('HTTPS');
-        return $https && $https !== false && strtolower($https) != 'off';
+
+        return $https && $https !== FALSE && strtolower($https) != 'off';
     }
 
     /**
@@ -1530,18 +1621,22 @@ class Core {
         $this->logInfo('Max execution time is ' . $currentTimeLimit);
     }
 
+    /**
+     * Get Jobs
+     *
+     * @return mixed
+     */
     public function getJobs() {
-        $jobs[Queries::STATUS_DELETE] = $this->dbLink->executeS(
-            $this->queries->getJobsByStatusQuery(Queries::STATUS_DELETE, $this->timeStart), true
-        );
+        $jobs[Queries::STATUS_DELETE] =
+            $this->dbLink->executeS($this->queries->getJobsByStatusQuery(Queries::STATUS_DELETE, $this->timeStart),
+                TRUE);
 
-        $jobs[Queries::STATUS_NEW] = $this->dbLink->executeS(
-            $this->queries->getJobsByStatusQuery(Queries::STATUS_NEW, $this->timeStart), true
-        );
+        $jobs[Queries::STATUS_NEW] =
+            $this->dbLink->executeS($this->queries->getJobsByStatusQuery(Queries::STATUS_NEW, $this->timeStart), TRUE);
 
-        $jobs[Queries::STATUS_UPDATE] = $this->dbLink->executeS(
-            $this->queries->getJobsByStatusQuery(Queries::STATUS_UPDATE, $this->timeStart), true
-        );
+        $jobs[Queries::STATUS_UPDATE] =
+            $this->dbLink->executeS($this->queries->getJobsByStatusQuery(Queries::STATUS_UPDATE, $this->timeStart),
+                TRUE);
 
         return $jobs;
     }
@@ -1556,13 +1651,17 @@ class Core {
         $url = trim($url);
 
         $url .= strpos($url, '?') > -1 ? '&' : '?';
+
         return $url . $key . '=' . $value;
     }
 
     /**
      * Checks if export criteria related settings are changed.
-     * @param $oldSettings serialized to string settings. Expects base64 string.
-     * @param $newSettings serialized to string settings. Expects base64 string.
+     *
+     * @param string  $oldSettings serialized to string settings. Expects base64 string.
+     * @param string  $newSettings serialized to string settings. Expects base64 string.
+     * @param boolean $base64      flag
+     *
      * @return true if export criteria settings are changed, false otherwise.
      */
     public function checkIfExportCriteriaSettingsChanged($oldSettings, $newSettings, $base64) {
@@ -1594,55 +1693,99 @@ class Core {
         return $this->isExtensionLoaded('mysqli') ? 'mysqli' : 'mysql';
     }
 
+    /**
+     * Get DB instance
+     *
+     * @param string $server   server name
+     * @param string $user     user
+     * @param string $password password
+     * @param string $database database
+     *
+     * @return mixed
+     */
     protected function getDbLinkInstance($server, $user, $password, $database) {
         static $instance;
 
         if (!isset($instance)) {
-            $class = 'mysqli' == $this->selectMySQLPhpExtension() ? 'com\extremeidea\bidorbuy\storeintegrator\core\MySQLi' : 'com\extremeidea\bidorbuy\storeintegrator\core\MySQL';
-            $instance = new $class($server, $user, $password, $database, false);
+            $class =
+                'mysqli' == $this->selectMySQLPhpExtension() ? 'com\extremeidea\bidorbuy\storeintegrator\core\MySQLi'
+                    : 'com\extremeidea\bidorbuy\storeintegrator\core\MySQL';
+            $instance = new $class($server, $user, $password, $database, FALSE);
         }
 
         return $instance;
     }
 
+    /**
+     * Remove Products
+     *
+     * @param mixed $ids ids
+     *
+     * @return void
+     */
     private function removeProducts(&$ids) {
         $this->dbLink->execute($this->queries->getRemoveProductsFromTradefeedQuery($ids, $this->timeStart));
     }
 
+    /**
+     * Build array to insert in DB
+     *
+     * @param array $data data
+     * @param boolean $includeDescriptionSummaryOnly flag
+     *
+     * @return array
+     */
     protected function buildArrayToInsert(array &$data, $includeDescriptionSummaryOnly) {
         $array = array();
-        if ($includeDescriptionSummaryOnly === true) {
-            $summary = $this->dbLink->escape($data[Tradefeed::nameProductSummary], true);
-            $description = $this->dbLink->escape($data[Tradefeed::nameProductDescription], true);
-            $productName = isset($data[0][Tradefeed::nameProductName]) ? $this->dbLink->escape($data[0][Tradefeed::nameProductName], true) : '';
-            $array['summary'] = ($this->settings->getExportProductSummary() && !empty($summary)) ? $summary : $productName;
-            $array['description'] = ($this->settings->getExportProductDescription() && !empty($description)) ? $description : $productName;
+        if ($includeDescriptionSummaryOnly === TRUE) {
+            $summary = $this->dbLink->escape($data[Tradefeed::nameProductSummary], TRUE);
+            $description = $this->dbLink->escape($data[Tradefeed::nameProductDescription], TRUE);
+            $productName = isset($data[0][Tradefeed::nameProductName])
+                ? $this->dbLink->escape($data[0][Tradefeed::nameProductName], TRUE) : '';
+            $array['summary'] =
+                ($this->settings->getExportProductSummary() && !empty($summary)) ? $summary : $productName;
+            $array['description'] =
+                ($this->settings->getExportProductDescription() && !empty($description)) ? $description : $productName;
+
             return $array;
         }
 
         $array['product_id'] = (isset($data[Tradefeed::nameProductId])) ? intval($data[Tradefeed::nameProductId]) : 0;
-        $array['variation_id'] = (isset($data[Settings::paramVariationId])) ? intval($data[Settings::paramVariationId]) : 0;
+        $array['variation_id'] =
+            (isset($data[Settings::paramVariationId])) ? intval($data[Settings::paramVariationId]) : 0;
         $array['category_id'] = (isset($data[Settings::paramCategoryId])) ? $data[Settings::paramCategoryId] : '';
         $array['row_created_on'] = date("Y-m-d H:i:s");
         $array['row_modified_on'] = date("Y-m-d H:i:s");
-        $array['code'] = (isset($data[Tradefeed::nameProductCode])) ? $this->dbLink->escape($data[Tradefeed::nameProductCode], true) : '';
-        $array['name'] = (isset($data[Tradefeed::nameProductName])) ? $this->dbLink->escape($data[Tradefeed::nameProductName], true) : '';
-        $array['category'] = (isset($data[Tradefeed::nameProductCategory])) ? $this->dbLink->escape($data[Tradefeed::nameProductCategory], true) : '';
-        $array['price'] = (isset($data[Tradefeed::nameProductPrice])) ? doubleval($data[Tradefeed::nameProductPrice]) : 0;
-        $array['market_price'] = (isset($data[Tradefeed::nameProductMarketPrice])) ? doubleval($data[Tradefeed::nameProductMarketPrice]) : 0;
-        $array['available_quantity'] = (isset($data[Tradefeed::nameProductAvailableQty])) ? intval($data[Tradefeed::nameProductAvailableQty]) : 0;
-        $array['condition'] = (isset($data[Tradefeed::nameProductCondition])) ? $data[Tradefeed::nameProductCondition] : '';
-        $array['image_url'] = (isset($data[Tradefeed::nameProductImageURL])) ? $data[Tradefeed::nameProductImageURL] : '';
+        $array['code'] =
+            (isset($data[Tradefeed::nameProductCode])) ? $this->dbLink->escape($data[Tradefeed::nameProductCode], TRUE)
+                : '';
+        $array['name'] =
+            (isset($data[Tradefeed::nameProductName])) ? $this->dbLink->escape($data[Tradefeed::nameProductName], TRUE)
+                : '';
+        $array['category'] = (isset($data[Tradefeed::nameProductCategory]))
+            ? $this->dbLink->escape($data[Tradefeed::nameProductCategory], TRUE) : '';
+        $array['price'] =
+            (isset($data[Tradefeed::nameProductPrice])) ? doubleval($data[Tradefeed::nameProductPrice]) : 0;
+        $array['market_price'] =
+            (isset($data[Tradefeed::nameProductMarketPrice])) ? doubleval($data[Tradefeed::nameProductMarketPrice]) : 0;
+        $array['available_quantity'] =
+            (isset($data[Tradefeed::nameProductAvailableQty])) ? intval($data[Tradefeed::nameProductAvailableQty]) : 0;
+        $array['condition'] =
+            (isset($data[Tradefeed::nameProductCondition])) ? $data[Tradefeed::nameProductCondition] : '';
+        $array['image_url'] =
+            (isset($data[Tradefeed::nameProductImageURL])) ? $data[Tradefeed::nameProductImageURL] : '';
 
         $images = '';
         if (isset($data[Tradefeed::nameProductImages])) {
             foreach ($data[Tradefeed::nameProductImages] as $image) {
-                $images .= $this->tradefeed->section(Tradefeed::nameProductImageURL, $image, true, 4);
+                $images .= $this->tradefeed->section(Tradefeed::nameProductImageURL, $image, TRUE, 4);
             }
         }
         $array['images'] = $images;
-        $array['shipping_product_class'] = (isset($data[Tradefeed::nameProductShippingClass])) ? $this->dbLink->escape($data[Tradefeed::nameProductShippingClass], true) : '';
-        $array['attr_custom_attrs'] = (isset($data[Tradefeed::nameProductAttributes])) ? $this->dbLink->escape($data[Tradefeed::nameProductAttributes], true) : '';
+        $array['shipping_product_class'] = (isset($data[Tradefeed::nameProductShippingClass]))
+            ? $this->dbLink->escape($data[Tradefeed::nameProductShippingClass], TRUE) : '';
+        $array['attr_custom_attrs'] = (isset($data[Tradefeed::nameProductAttributes]))
+            ? $this->dbLink->escape($data[Tradefeed::nameProductAttributes], TRUE) : '';
 
         return $array;
     }
@@ -1671,7 +1814,7 @@ class Core {
                 $fileObject = $fsobj->GetFile(realpath($file));
                 $size = $fileObject->Size;
             } catch (\Exception $e) {
-                $size = null;
+                $size = NULL;
             }
             if (ctype_digit($size)) {
                 return $size;
@@ -1731,9 +1874,9 @@ class Core {
 
     /**
      * Add Zlib headers if extension is active
-     * 
+     *
      * @param boolean $zlibEnabled zlib status(on/off)
-     * 
+     *
      * @return mixed
      */
     protected function addZlibHeaders($zlibEnabled) {
@@ -1741,6 +1884,7 @@ class Core {
             header('Content-Encoding: gzip');
             header('Vary: Accept-Encoding');
         }
-        return false;
+
+        return FALSE;
     }
 }

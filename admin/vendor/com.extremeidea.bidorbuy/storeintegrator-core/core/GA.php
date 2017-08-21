@@ -17,48 +17,26 @@ namespace com\extremeidea\bidorbuy\storeintegrator\core;
 class GA {
     const GA_URL = 'https://stats.g.doubleclick.net/__utm.gif'; //@nczz update v5.6.4dc
 
-    private $data = array(
-        'utmac' => null,
-        'utmcc' => null,
-        'utmcn' => null,
-        'utmcr' => null,
-        'utmcs' => null,
-        'utmdt' => '-',
-        'utmfl' => '-',
-        'utme' => null,
-        'utmni' => null,
-        'utmhn' => null,
-        'utmipc' => null,
-        'utmipn' => null,
-        'utmipr' => null,
-        'utmiqt' => null,
-        'utmiva' => null,
-        'utmje' => 0,
-        'utmn' => null,
-        'utmp' => null,
-        'utmr' => null,
-        'utmsc' => '-',
-        'utmvp' => '-',
-        'utmsr' => '-',
-        'utmt' => null,
-        'utmtci' => null,
-        'utmtco' => null,
-        'utmtid' => null,
-        'utmtrg' => null,
-        'utmtsp' => null,
-        'utmtst' => null,
-        'utmtto' => null,
-        'utmttx' => null,
-        'utmul' => '-',
-        'utmhid' => null,
-        'utmht' => null,
-        'utmwv' => '5.6.4dc');
+    private $data = array('utmac' => NULL, 'utmcc' => NULL, 'utmcn' => NULL, 'utmcr' => NULL, 'utmcs' => NULL,
+        'utmdt' => '-', 'utmfl' => '-', 'utme' => NULL, 'utmni' => NULL, 'utmhn' => NULL, 'utmipc' => NULL,
+        'utmipn' => NULL, 'utmipr' => NULL, 'utmiqt' => NULL, 'utmiva' => NULL, 'utmje' => 0, 'utmn' => NULL,
+        'utmp' => NULL, 'utmr' => NULL, 'utmsc' => '-', 'utmvp' => '-', 'utmsr' => '-', 'utmt' => NULL,
+        'utmtci' => NULL, 'utmtco' => NULL, 'utmtid' => NULL, 'utmtrg' => NULL, 'utmtsp' => NULL, 'utmtst' => NULL,
+        'utmtto' => NULL, 'utmttx' => NULL, 'utmul' => '-', 'utmhid' => NULL, 'utmht' => NULL, 'utmwv' => '5.6.4dc');
 
     private $tracking;
     private $request;
 
 
-    public function __construct($userAgent = null, $domain = null) {
+    /**
+     * GA constructor.
+     *
+     * @param string $userAgent UA
+     * @param string $domain    domain
+     *
+     * @return mixed
+     */
+    public function __construct($userAgent = NULL, $domain = NULL) {
         $this->request = new http\Request();
 
         $this->data['utmac'] = $userAgent;
@@ -79,21 +57,23 @@ class GA {
     public function createGif() {
         $data = array();
         foreach ($this->data as $key => $item) {
-            if ($item !== null) {
+            if ($item !== NULL) {
                 $data[$key] = $item;
             }
         }
+
         return $this->tracking = self::GA_URL . '?' . http_build_query($data);
     }
 
     /**
      * Send tracking code/gif to GB
      *
-     * @return
+     * @return mixed
      */
     public function send() {
-        if (!isset($this->tracking))
+        if (!isset($this->tracking)) {
             $this->createGif();
+        }
 
         return $this->remoteCall();
     }
@@ -117,9 +97,9 @@ class GA {
         if ($curlInit) {
             $curl = curl_init();
             curl_setopt($curl, CURLOPT_URL, $this->tracking);
-            curl_setopt($curl, CURLOPT_HEADER, false);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false); //@nczz Fixed HTTPS GET method
+            curl_setopt($curl, CURLOPT_HEADER, FALSE);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); //@nczz Fixed HTTPS GET method
             curl_setopt($curl, CURLOPT_TIMEOUT, 10);
             curl_exec($curl);
             curl_close($curl);
@@ -135,44 +115,21 @@ class GA {
 
     /**
      * Reset Defaults
+     *
      * @return null
      */
     public function reset() {
-        $data = array(
-            'utmac' => null,
-            'utmcc' => $this->createCookie(),
-            'utmcn' => null,
-            'utmcr' => null,
-            'utmcs' => null,
-            'utmdt' => '-',
-            'utmfl' => '-',
-            'utme' => null,
-            'utmni' => null,
-            'utmipc' => null,
-            'utmipn' => null,
-            'utmipr' => null,
-            'utmiqt' => null,
-            'utmiva' => null,
-            'utmje' => '0',
-            'utmn' => rand(1000000000, 9999999999),
-            'utmp' => $this->request->server->get('PHP_SELF'),
-            'utmr' => $this->request->server->get('HTTP_REFERER') ?: '',
-            'utmsc' => '-',
-            'utmsr' => '-',
-            'utmt' => null,
-            'utme' => null,
-            'utmtci' => null,
-            'utmtco' => null,
-            'utmtid' => null,
-            'utmtrg' => null,
-            'utmtsp' => null,
-            'utmtst' => null,
-            'utmtto' => null,
-            'utmttx' => null,
-            'utmul' => 'php',
-            'utmht' => time() * 1000,
-            'utmwv' => '5.6.4dc');
-        $this->tracking = null;
+        $data =
+            array('utmac' => NULL, 'utmcc' => $this->createCookie(), 'utmcn' => NULL, 'utmcr' => NULL, 'utmcs' => NULL,
+                'utmdt' => '-', 'utmfl' => '-', 'utme' => NULL, 'utmni' => NULL, 'utmipc' => NULL, 'utmipn' => NULL,
+                'utmipr' => NULL, 'utmiqt' => NULL, 'utmiva' => NULL, 'utmje' => '0',
+                'utmn' => rand(1000000000, 9999999999), 'utmp' => $this->request->server->get('PHP_SELF'),
+                'utmr' => $this->request->server->get('HTTP_REFERER') ?: '', 'utmsc' => '-', 'utmsr' => '-',
+                'utmt' => NULL, 'utme' => NULL, 'utmtci' => NULL, 'utmtco' => NULL, 'utmtid' => NULL, 'utmtrg' => NULL,
+                'utmtsp' => NULL, 'utmtst' => NULL, 'utmtto' => NULL, 'utmttx' => NULL, 'utmul' => 'php',
+                'utmht' => time() * 1000, 'utmwv' => '5.6.4dc');
+        $this->tracking = NULL;
+
         return $this->data = $data;
     }
 
@@ -191,6 +148,7 @@ class GA {
         $cookie .= '__utmc=' . $rand_id . ';+';
         $cookie .= '__utmz=' . $rand_id . '.' . $time . '.2.2.utmccn=(direct)|utmcsr=(direct)|utmcmd=(none);+';
         $cookie .= '__utmv=' . $rand_id . '.' . $var . ';';
+
         return $cookie;
     }
 
@@ -203,23 +161,58 @@ class GA {
     // Product //
     /////////////
 
-    public function setProductCode($var = null) {
+    /**
+     * Set Product Code
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setProductCode($var = NULL) {
         return $this->data['utmipc'] = $var;
     }
 
-    public function setProductName($var = null) {
+    /**
+     * Set Product Name
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setProductName($var = NULL) {
         return $this->data['utmipn'] = $var;
     }
 
-    public function setUnitPrice($var = null) {
+    /**
+     * Set Unit Price
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setUnitPrice($var = NULL) {
         return $this->data['utmipr'] = $var;
     }
 
-    public function setQty($var = null) {
+    /**
+     * Set Qty
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setQty($var = NULL) {
         return $this->data['utmiqt'] = $var;
     }
 
-    public function setVariation($var = null) {
+    /**
+     * Set Variation
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setVariation($var = NULL) {
         return $this->data['utmiva'] = $var;
     }
 
@@ -227,39 +220,92 @@ class GA {
     // Misc //
     //////////
 
-
-    public function setJava($var = null) {
+    /**
+     * Set Java
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setJava($var = NULL) {
         return $this->data['utmje'] = $var;
     }
 
-
-    public function setEncodeType($var = null) {
+    /**
+     * Set Encode Type
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setEncodeType($var = NULL) {
         return $this->data['utmcs'] = $var;
     }
 
-    public function setFlashVersion($var = null) {
+    /**
+     * Set Flash Version
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setFlashVersion($var = NULL) {
         return $this->data['utmfl'] = $var;
     }
 
-
-    public function setHost($var = null) {
+    /**
+     * Set Host
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setHost($var = NULL) {
         return $this->data['utmhn'] = $var;
     }
 
-    public function setScreenDepth($var = null) {
+    /**
+     * Set Screen Dept
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setScreenDepth($var = NULL) {
         return $this->data['utmsc'] = $var;
     }
 
 
-    public function setScreenResolution($var = null) {
+    /**
+     * Set Screen Resolution
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setScreenResolution($var = NULL) {
         return $this->data['utmsr'] = $var;
     }
 
-    public function setLang($var = null) {
+    /**
+     * Set Language
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setLang($var = NULL) {
         return $this->data['utmul'] = $var;
     }
 
-    public function setGaVersion($var = null) {
+    /**
+     * Set GA version
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setGaVersion($var = NULL) {
         return $this->data['utmwv'] = isset($var) ? $var : $this->data['utmwv'];
     }
 
@@ -267,26 +313,58 @@ class GA {
     // Page //
     //////////
 
-    public function setPage($var = null) {
+    /**
+     * Set Page
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setPage($var = NULL) {
         return $this->data['utmp'] = $var;
     }
 
-
-    public function setPageTitle($var = null) {
+    /**
+     * Set Page Title
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setPageTitle($var = NULL) {
         return $this->data['utmdt'] = $var;
     }
 
-
-    public function setCampaign($var = null) {
+    /**
+     * Set Campaign
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setCampaign($var = NULL) {
         return $this->data['utmcn'] = $var;
     }
 
-
-    public function cloneCampaign($var = null) {
+    /**
+     * Clone Campaign
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function cloneCampaign($var = NULL) {
         return $this->data['utmcr'] = $var;
     }
 
-    public function setReferal($var = null) {
+    /**
+     * Set Referal
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setReferal($var = NULL) {
         return $this->data['utmr'] = $var;
     }
 
@@ -294,7 +372,18 @@ class GA {
     // Events //
     ////////////
 
-    public function setEvent($category, $action, $label = '', $value = '', $opt_noninteraction = null) {
+    /**
+     * Set Event.
+     *
+     * @param string $category           category
+     * @param string $action             action
+     * @param string $label              label
+     * @param string $value              value
+     * @param null   $opt_noninteraction flag
+     *
+     * @return string
+     */
+    public function setEvent($category, $action, $label = '', $value = '', $opt_noninteraction = NULL) {
         $event_category = (string)$category;
         $event_action = (string)$action;
 
@@ -311,6 +400,7 @@ class GA {
         }
 
         $this->data['utmt'] = 'event';
+
         return $this->data['utme'] = $event_string;
     }
 
@@ -318,38 +408,91 @@ class GA {
     // Order //
     ///////////
 
-    public function setOrderId($var = null) {
+    /**
+     * Set Order Id
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setOrderId($var = NULL) {
         return $this->data['utmtid'] = $var;
     }
 
-    public function setBillingCity($var = null) {
+    /**
+     * Set Billing City
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setBillingCity($var = NULL) {
         return $this->data['utmtci'] = $var;
     }
 
-    public function setBillingCountry($var = null) {
+    /**
+     * Set Billing Country
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setBillingCountry($var = NULL) {
         return $this->data['utmtco'] = $var;
     }
 
-    public function setBillingRegion($var = null) {
+    /**
+     * Set Billing Region
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setBillingRegion($var = NULL) {
         return $this->data['utmtrg'] = $var;
     }
 
-
-    public function setShippingCost($var = null) {
+    /**
+     * Set Shipping Coast
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setShippingCost($var = NULL) {
         return $this->data['utmtsp'] = $var;
     }
 
-
-    public function setAffiliate($var = null) {
+    /**
+     * Set Affiliate 
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setAffiliate($var = NULL) {
         return $this->data['utmtst'] = $var;
     }
 
-
-    public function setTotal($var = null) {
+    /**
+     * Set Total
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setTotal($var = NULL) {
         return $this->data['utmtto'] = $var;
     }
 
-    public function setTaxes($var = null) {
+    /**
+     * Set Taxes 
+     *
+     * @param string $var value
+     *
+     * @return null
+     */
+    public function setTaxes($var = NULL) {
         return $this->data['utmttx'] = $var;
     }
 
@@ -419,15 +562,18 @@ class GA {
 
 /**
  * Instantiate new class and push data
+ *
  * @param  string $userAgent The UA string of the GA account to use
- * @param  string $domain domain
- * @param  string $page the page to set the pageview
+ * @param  string $domain    domain
+ * @param  string $page      the page to set the pageview
+ *
  * @return null
  */
-function ssga_track($userAgent = null, $domain = null, $page = null) {
+function ssga_track($userAgent = NULL, $domain = NULL, $page = NULL) {
     $ssga = new GA($userAgent, $domain);
     $ssga->setPage($page);
     $ssga->send();
     $ssga->reset();
+
     return $ssga;
 }

@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'com\\extremeidea\\php\\tools\\log4php\\' => array($vendorDir . '/com.extremeidea.php/log4php'),
     'com\\extremeidea\\bidorbuy\\storeintegrator\\core\\' => array($vendorDir . '/com.extremeidea.bidorbuy/storeintegrator-core/core'),
+    'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
+    'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
 );
