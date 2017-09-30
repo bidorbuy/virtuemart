@@ -40,6 +40,7 @@ if (class_exists('\com\extremeidea\bidorbuy\storeintegrator\core\Tradefeed', FAL
  * @SuppressWarnings(PHPMD.ConstantNamingConventions)
  */
 class Tradefeed {
+    //@codingStandardsIgnoreStart
     const xmlVersion = '<?xml version=\'1.0\' encoding=\'UTF-8\'?>';
 
     const nameRoot = 'ROOT';
@@ -83,8 +84,9 @@ class Tradefeed {
     const categoryIdDelimiter = "-";
 
     const settingsNameExcludedAttributes = 'nameExcludedAttributes';
+    const nameProductExcludedAttributes = 'nameProductExcludedAttributes';
     const settingsNameAttributesOrder = 'nameAttributesOrder';
-
+    //@codingStandardsIgnoreEnd
     private static $versionInstance;
 
     public static function createStartRootTag() {
@@ -203,9 +205,10 @@ class Tradefeed {
                     $nameAttributesOrder[] = array($label => ucfirst(self::getAttrValue($value)));
                 }
             }
-
+            $data[self::nameProductExcludedAttributes] = isset($data[self::nameProductExcludedAttributes])  ?
+                $data[self::nameProductExcludedAttributes] : array();
             $data[self::nameProductName] .= self::getTitleAppendix($data[self::nameProductAttributes],
-                $nameExcludedAttributes);
+                array_merge($nameExcludedAttributes, $data[self::nameProductExcludedAttributes]));
         }
 
         foreach ($nameAttributesOrder as $v) {
@@ -446,9 +449,9 @@ class Tradefeed {
                 $url .= '@';
             }
 
-            $url .=  (preg_match('!^[\da-f]*:[\da-f.:]+$!ui', $parts['host'])) ? 
+            $url .=  (preg_match('!^[\da-f]*:[\da-f.:]+$!ui', $parts['host'])) ?
                 '[' . $parts['host'] . ']' : $parts['host'];
-            
+
             if (isset($parts['port'])) {
                 $url .= ':' . $parts['port'];
             }
@@ -482,9 +485,10 @@ class Tradefeed {
      */
     public static function getTitleAppendix($attributes, $excludedAttributes = array()) {
         $titleAppendix = array();
+        array_walk($excludedAttributes, array(__CLASS__, 'getAttrName'));
+        $excludedAttributes = array_map(array(__CLASS__, 'sanitize'), $excludedAttributes);
         foreach ($attributes as $name => $value) {
             $name = self::sanitize(self::getAttrName($name, $value));
-
             if (!in_array($name, $excludedAttributes) && strlen(trim(self::getAttrValue($value))) > 0) {
                 if (self::isMeasurable($name)) {
                     $number = self::formatPrice(self::getAttrValue($value));
@@ -638,7 +642,7 @@ class Tradefeed {
 
     /**
      * Is Measurable
-     * 
+     *
      * @param string $valueName Value Name
      *
      * @return mixed
@@ -651,7 +655,7 @@ class Tradefeed {
 
     /**
      * Build Xml View Product
-     * 
+     *
      * @param array $data data
      *
      * @return string

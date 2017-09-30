@@ -2,9 +2,13 @@
 
 ### Compatibility
 
-Requires at least: Joomla - v 2.0 (VirtueMart - v.1.9)
+| Product | v2.5.28 | v2.5.28 |PHP version |
+| ------- | --- | --- | --- | --- | --- |
+| Store Integrator-2.0.10 | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|
+| Store Integrator-2.0.9  | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|
+| Store Integrator-2.0.8  | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|
+| Store Integrator-2.0.7  | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.3|
 
-Tested up to: Joomla - v 2.5 (VirtueMart - v.2.6.17)
 
 ### Description
 
@@ -37,7 +41,9 @@ PHP extensions: curl, mbstring
 
 ### Upgrade
 
-To upgrade the plugin, please: 1. Re-install the archive (please, look through the installation chapter). 2. Do a Reset export data.
+To upgrade the plugin, please:
+1. Re-install the archive (please, look through the installation chapter).
+2. Do a Reset export data.
 
 ### Configuration
 
