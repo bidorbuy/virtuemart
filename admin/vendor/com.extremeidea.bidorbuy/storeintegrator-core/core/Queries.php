@@ -240,8 +240,8 @@ class Queries {
      */
     public function getTradefeedDataQuery() {
         return $this->select($this->tablePrefix . self::TABLE_BOBSI_TRADEFEED,
-            '`product_id`, `name`, `code`, `category`, `price`, `market_price`, `available_quantity`, `condition`, ' .
-            '`attr_custom_attrs`, `shipping_product_class`, `image_url`, `summary`, `description`');
+            '`product_id`, `name`, `code`, `category`, `price`, `market_price`, `available_quantity`, `condition`, '
+            . '`attr_custom_attrs`, `shipping_product_class`, `image_url`, `summary`, `description`');
     }
 
     /**
@@ -365,7 +365,7 @@ class Queries {
      */
     private function createTable($tableName, $fields) {
         return "CREATE TABLE IF NOT EXISTS `$tableName` (" . $fields
-        . ") ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+            . ") ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci";
     }
 
     /**

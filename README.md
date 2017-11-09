@@ -2,8 +2,9 @@
 
 ### Compatibility
 
-| Product | v2.5.28 | v2.5.28 |PHP version |
+| Product | Joomla v2.5.28 | Joomla v2.5.28 |PHP version |
 | ------- | --- | --- | --- | --- | --- |
+| Store Integrator-2.0.11 | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|
 | Store Integrator-2.0.10 | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|
 | Store Integrator-2.0.9  | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|
 | Store Integrator-2.0.8  | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|

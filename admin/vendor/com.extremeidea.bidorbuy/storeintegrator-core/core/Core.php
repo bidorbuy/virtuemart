@@ -310,8 +310,7 @@ class Core {
         }
 
         if (isset($exportConfiguration[Settings::paramExtensions])
-            && is_array($exportConfiguration[Settings::paramExtensions])
-        ) {
+            && is_array($exportConfiguration[Settings::paramExtensions])) {
             $this->logInfo('Extensions: ' . implode('; ',
                     array_values($exportConfiguration[Settings::paramExtensions])));
         }
@@ -584,9 +583,9 @@ class Core {
         $count = ceil($count[0][Queries::ROW_NAME] / $pagination);
         $productsCount = 0;
         for ($i = 0; $i < $count; $i++) {
-            $sqlQuery = $this->getQueries()->getXmlViewDataQuery(
-                    $exportConfiguration[Settings::paramCategories])
-                . ' LIMIT ' . $i * $pagination . ', ' . $pagination;
+            $sqlQuery =
+                $this->getQueries()->getXmlViewDataQuery($exportConfiguration[Settings::paramCategories]) . ' LIMIT '
+                . $i * $pagination . ', ' . $pagination;
 
             $result = $this->dbLink->query($sqlQuery, TRUE);
             if (!$result) {
@@ -599,7 +598,7 @@ class Core {
             }
         }
         $this->logInfo("Product pages: $count, products exported: $productsCount");
-        
+
         fwrite($resource, $this->tradefeed->createEndProductsTag());
         fwrite($resource, $this->tradefeed->createEndRootTag());
         fclose($resource);
@@ -681,7 +680,7 @@ class Core {
             </body>
             </html>
             ";
-
+        $this->logInfo('Reset Audit Running...');
         $this->callExit();
     }
 
@@ -884,13 +883,14 @@ class Core {
             . $untouchedProductsString);
 
         //mark jobs as processing
-        $this->dbLink->execute($this->queries->getSetJobsRowStatusQuery($untouchedProductsString,
-            Queries::STATUS_PROCESSING, $this->timeStart));
+        if (!empty($untouchedProductsString)) {
+            $this->dbLink->execute($this->queries->getSetJobsRowStatusQuery($untouchedProductsString,
+                Queries::STATUS_PROCESSING, $this->timeStart));
+        }
 
         //remove old products from tradefeed on update
         if (!$exportConfiguration[Settings::paramProductStatus] or $exportConfiguration[Settings::paramProductStatus]
-            == Queries::STATUS_UPDATE
-        ) {
+            == Queries::STATUS_UPDATE) {
             $this->removeProducts($untouchedProductsString, $exportConfiguration);
         }
 
@@ -914,14 +914,10 @@ class Core {
 
                 if (count($products) == 2
                     && array_key_exists(Tradefeed::nameProductSummary, $products)
-                    && array_key_exists(Tradefeed::nameProductDescription, $products)
-                ) {
+                    && array_key_exists(Tradefeed::nameProductDescription, $products)) {
                     //Array contains only description product is absent
-                    $this->logger->warning(
-                        $this->guid
-                        . ': '
-                        . 'Defect #4409: Pass empty array to store in Database. Skipped...'
-                    ); // Log
+                    $this->logger->warning($this->guid . ': '
+                        . 'Defect #4409: Pass empty array to store in Database. Skipped...'); // Log
 
                     continue; // Skip
                 }
@@ -997,8 +993,10 @@ class Core {
         }
 
         //mark jobs as finished
-        $this->dbLink->execute($this->queries->getSetJobsRowStatusQuery($untouchedProductsString,
-            Queries::STATUS_DELETE, $this->timeStart));
+        if (!empty($untouchedProductsString)) {
+            $this->dbLink->execute($this->queries->getSetJobsRowStatusQuery($untouchedProductsString,
+                Queries::STATUS_DELETE, $this->timeStart));
+        }
 
         $timeFinish = time();
         $this->logInfo('Processing product time is ' . ($timeFinish - $timeStart) . ' s');
@@ -1069,7 +1067,7 @@ class Core {
      * Log info message
      *
      * @param string $message message
-     * @param mixed $data data to log
+     * @param mixed  $data    data to log
      *
      * @return void
      */
@@ -1090,9 +1088,9 @@ class Core {
 
     /**
      * Log fatal error
-     * 
+     *
      * @param string $message message
-     *                        
+     *
      * @return void
      */
     public function logFatal($message) {
@@ -1185,8 +1183,7 @@ class Core {
         $logs = array();
         foreach ($files as $file) {
             if (preg_match('/^bobsi_\d{4}\-\d{2}\-\d{2}\.log$/i', $file)
-                && is_file(Settings::$logsPath . '/' . $file)
-            ) {
+                && is_file(Settings::$logsPath . '/' . $file)) {
                 $filesize = $this->formatbytes(Settings::$logsPath . '/' . $file, 'MB');
 
                 $sizeOfFile = filesize(Settings::$logsPath . '/' . $file);
@@ -1437,8 +1434,8 @@ class Core {
         $mrHandler->setConnectionsLimit(4);
 
         $headers = array();
-        $headers[] = 'Accept: text/xml,application/xml,application/xhtml+xml,text/html;' .
-            'q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
+        $headers[] = 'Accept: text/xml,application/xml,application/xhtml+xml,text/html;'
+            . 'q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
         $headers[] = 'Cache-Control: no-cache';
         $headers[] = 'Connection: Keep-Alive';
         $headers[] = 'Keep-Alive: 300';
@@ -1535,7 +1532,7 @@ class Core {
      * Format bytes
      *
      * @param resource $file file
-     * @param string $type type
+     * @param string   $type type
      *
      * @return int|string
      */
@@ -1672,13 +1669,13 @@ class Core {
         $new->unserialize($newSettings, $base64);
 
         return $old->getExportQuantityMoreThan() != $new->getExportQuantityMoreThan()
-        || count(array_diff($old->getExcludeCategories(), $new->getExcludeCategories())) > 0
-        || count(array_diff($new->getExcludeCategories(), $old->getExcludeCategories())) > 0
-        || count(array_diff($old->getExportStatuses(), $new->getExportStatuses())) > 0
-        || count(array_diff($new->getExportStatuses(), $old->getExportStatuses())) > 0
-        || $old->getDefaultStockQuantity() != $new->getDefaultStockQuantity()
-        || $old->getExportProductSummary() != $new->getExportProductSummary()
-        || $old->getExportProductDescription() != $new->getExportProductDescription();
+            || count(array_diff($old->getExcludeCategories(), $new->getExcludeCategories())) > 0
+            || count(array_diff($new->getExcludeCategories(), $old->getExcludeCategories())) > 0
+            || count(array_diff($old->getExportStatuses(), $new->getExportStatuses())) > 0
+            || count(array_diff($new->getExportStatuses(), $old->getExportStatuses())) > 0
+            || $old->getDefaultStockQuantity() != $new->getDefaultStockQuantity()
+            || $old->getExportProductSummary() != $new->getExportProductSummary()
+            || $old->getExportProductDescription() != $new->getExportProductDescription();
     }
 
     protected function isExtensionLoaded($extension) {
@@ -1724,13 +1721,15 @@ class Core {
      * @return void
      */
     private function removeProducts(&$ids) {
-        $this->dbLink->execute($this->queries->getRemoveProductsFromTradefeedQuery($ids, $this->timeStart));
+        if (!empty($ids)) {
+            $this->dbLink->execute($this->queries->getRemoveProductsFromTradefeedQuery($ids, $this->timeStart));
+        }
     }
 
     /**
      * Build array to insert in DB
      *
-     * @param array $data data
+     * @param array   $data                          data
      * @param boolean $includeDescriptionSummaryOnly flag
      *
      * @return array
