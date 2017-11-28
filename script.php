@@ -48,22 +48,22 @@ if (!class_exists('com_bidorbuyStoreIntegratorInstallerScript')) {
         public function __construct() {
             $this->bidorbuyStoreIntegrator = $this->coreInitialize();
         }
-        
+
         public function coreInitialize($settings = null) {
-            
+
             $core = new bobsi\Core();
-            
+
             $version = new JVersion();
-            
+
             $dbSettings = array(
-                bobsi\Db::SETTING_PREFIX => JFactory::getConfig()->getValue('config.dbprefix'),
-                bobsi\Db::SETTING_SERVER => JFactory::getConfig()->getValue('config.host'),
-                bobsi\Db::SETTING_USER => JFactory::getConfig()->getValue('config.user'),
-                bobsi\Db::SETTING_PASS => JFactory::getConfig()->getValue('config.password'),
-                bobsi\Db::SETTING_DBNAME => JFactory::getConfig()->getValue('config.db')
+                bobsi\Db::SETTING_PREFIX => JFactory::getConfig()->get('dbprefix'),
+                bobsi\Db::SETTING_SERVER => JFactory::getConfig()->get('host'),
+                bobsi\Db::SETTING_USER => JFactory::getConfig()->get('user'),
+                bobsi\Db::SETTING_PASS => JFactory::getConfig()->get('password'),
+                bobsi\Db::SETTING_DBNAME => JFactory::getConfig()->get('db')
             );
-            $core->init(JFactory::getConfig()->getValue('config.sitename'), JFactory::getConfig()->getValue('config.mailfrom'), $version->PRODUCT . ' ' . $version->RELEASE . '.' . $version->DEV_LEVEL . '.' . $version->DEV_STATUS, $settings, $dbSettings);
-            
+            $core->init(JFactory::getConfig()->get('sitename'), JFactory::getConfig()->get('mailfrom'), $version->PRODUCT . ' ' . $version->RELEASE . '.' . $version->DEV_LEVEL . '.' . $version->DEV_STATUS, $settings, $dbSettings);
+
             return $core;
         }
 
@@ -115,7 +115,7 @@ if (!class_exists('com_bidorbuyStoreIntegratorInstallerScript')) {
             $config = JFactory::getConfig();
             $dbName=$config->get('db');
             $dbPrefix=$config->get('dbprefix');
-            
+
             if(!$this->check_field_exist($dbName,$dbPrefix)){
                 $this->addAllProductsInQueue(true);
                 $this->bobsi_update($dbPrefix);
@@ -128,15 +128,13 @@ if (!class_exists('com_bidorbuyStoreIntegratorInstallerScript')) {
 
         static public function updateSettings($name, $settings) {
             $db = JFactory::getDBo();
-
-                $query = $db->getQuery(true);
-                $query->update($db->quoteName('#__extensions'));
-                $query->set($db->quoteName('params') . ' = ' . $db->quote(json_encode(array($name => $settings))));
-                $query->where($db->quoteName('name') . ' = ' . $db->quote('bidorbuystoreintegrator'));
-            
+            $query = $db->getQuery(true);
+            $query->update($db->quoteName('#__extensions'));
+            $query->set($db->quoteName('params') . ' = ' . $db->quote(json_encode(array($name => $settings))));
+            $query->where($db->quoteName('element') . ' = ' . $db->quote('com_bidorbuystoreintegrator'));            
 
             $db->setQuery($query);
-            $db->query();
+            $db->execute();
         }
 
         public function addAllProductsInQueue($update = false) {
@@ -217,7 +215,7 @@ if (!class_exists('com_bidorbuyStoreIntegratorInstallerScript')) {
             AND column_name = 'images';";
             JFactory::getDBo()->setQuery($check_images_field);
             $field = JFactory::getDBo()->loadAssoc();
-            
+
             return $field['result'];
         }
 

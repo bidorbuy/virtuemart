@@ -30,20 +30,17 @@ require_once(dirname(__FILE__) . '/../com_virtuemart/helpers/config.php');
 require_once(dirname(__FILE__) . '/../com_virtuemart/models/category.php');
 require_once(dirname(__FILE__) . '/../com_virtuemart/helpers/shopfunctions.php');
 
-
-$jver = new JVersion();
-defined('JVER') OR define('JVER', $jver->RELEASE);
-
-class BidorbuyStoreIntegratorController extends JController {
+class BidorbuyStoreIntegratorController extends JControllerLegacy {
     private $bidorbuyStoreIntegrator;
 
     function __construct($config = array()) {
         $this->bidorbuyStoreIntegrator = new bobsi\Core();
 
-        $bobsiParams[bobsi\Settings::name] = JComponentHelper::getParams('com_bidorbuystoreintegrator')->get(bobsi\Settings::name);
-        
+        $bobsiParams[bobsi\Settings::name] =
+            JComponentHelper::getParams('com_bidorbuystoreintegrator')->get(bobsi\Settings::name);
+
         if (isset($bobsiParams[bobsi\Settings::name])) {
-            $this->bidorbuyStoreIntegrator->getSettings()->unserialize($bobsiParams[bobsi\Settings::name], true);
+            $this->bidorbuyStoreIntegrator->getSettings()->unserialize($bobsiParams[bobsi\Settings::name], TRUE);
         }
 
         $app = JFactory::getApplication();
@@ -55,18 +52,18 @@ class BidorbuyStoreIntegratorController extends JController {
         parent::__construct($config);
     }
 
-    function display($cachable = false, $urlparams = false) {
+    function display($cachable = FALSE, $urlparams = FALSE) {
         $app = JFactory::getApplication();
 
         // set default view if not set
-            $input = $app->input;
-            $input->set('view', $input->getCmd('view', 'settings'));
-            $bobsiLoggingFormAction = $input->getString(bobsi\Settings::nameLoggingFormAction, '');
-            $bobsiLoggingFormFileName = $input->getString(bobsi\Settings::nameLoggingFormFilename, '');
+        $input = $app->input;
+        $input->set('view', $input->getCmd('view', 'settings'));
+        $bobsiLoggingFormAction = $input->getString(bobsi\Settings::nameLoggingFormAction, '');
+        $bobsiLoggingFormFileName = $input->getString(bobsi\Settings::nameLoggingFormFilename, '');
 
         if ($bobsiLoggingFormAction) {
-            $messages = $this->bidorbuyStoreIntegrator->processAction(
-                $bobsiLoggingFormAction, array(bobsi\Settings::nameLoggingFormFilename => $bobsiLoggingFormFileName));
+            $messages = $this->bidorbuyStoreIntegrator->processAction($bobsiLoggingFormAction,
+                array(bobsi\Settings::nameLoggingFormFilename => $bobsiLoggingFormFileName));
             foreach ($messages as $message) {
                 $app->enqueueMessage($message, 'message');
             }
@@ -87,7 +84,7 @@ class BidorbuyStoreIntegratorController extends JController {
         //if ($model = $this->getModel($viewName)) {
         //TODO: This shouldn't be hardcoded !
         if ($model = $this->getModel($viewName)) {
-            $view->setModel($model, true);
+            $view->setModel($model, TRUE);
         }
         $view->assignRef('document', $document);
         $conf = JFactory::getConfig();
@@ -96,7 +93,7 @@ class BidorbuyStoreIntegratorController extends JController {
             $option = JRequest::getCmd('option');
             $cache = JFactory::getCache($option, 'view');
             if (is_array($urlparams)) {
-//                $app = JFactory::getApplication();
+                //                $app = JFactory::getApplication();
                 if (!empty($app->registeredurlparams)) {
                     $registeredurlparams = $app->registeredurlparams;
                 } else {
@@ -115,7 +112,7 @@ class BidorbuyStoreIntegratorController extends JController {
         return $this;
     }
 
-    public function save($key = null, $urlVar = null) {
+    public function save($key = NULL, $urlVar = NULL) {
         JRequest::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
         $app = JFactory::getApplication();
 
@@ -123,21 +120,17 @@ class BidorbuyStoreIntegratorController extends JController {
 
         $wordings = $this->bidorbuyStoreIntegrator->getSettings()->getDefaultWordings();
         $presaved_settings = array();
-        $prevent_saving = false;
+        $prevent_saving = FALSE;
 
-        $settings_checklist = array(
-            bobsi\Settings::nameUsername => 'strval',
-            bobsi\Settings::namePassword => 'strval',
-            bobsi\Settings::nameFilename => 'strval',
-            bobsi\Settings::nameCompressLibrary => 'strval',
+        $settings_checklist = array(bobsi\Settings::nameUsername => 'strval', bobsi\Settings::namePassword => 'strval',
+            bobsi\Settings::nameFilename => 'strval', bobsi\Settings::nameCompressLibrary => 'strval',
             bobsi\Settings::nameDefaultStockQuantity => 'intval',
             bobsi\Settings::nameEmailNotificationAddresses => 'strval',
-            bobsi\Settings::nameEnableEmailNotifications => 'bool',
-            bobsi\Settings::nameLoggingLevel => 'strval',
+            bobsi\Settings::nameEnableEmailNotifications => 'bool', bobsi\Settings::nameLoggingLevel => 'strval',
             bobsi\Settings::nameExportQuantityMoreThan => 'intval',
             bobsi\Settings::nameExcludeCategories => 'categories',
             BIDORBUY_STORE_INTEGRATOR_CATEGORYSLUG_NAME => 'bool',
-//          bobsi\Settings::nameExportActiveProducts => 'bool'
+            //          bobsi\Settings::nameExportActiveProducts => 'bool'
         );
 
         foreach ($settings_checklist as $setting => $prevalidation) {
@@ -160,72 +153,82 @@ class BidorbuyStoreIntegratorController extends JController {
                 continue;
             }
 
-            if (!call_user_func($wordings[$setting][bobsi\Settings::nameWordingsValidator], $presaved_settings[$setting])) {
-                $app->enqueueMessage('Invalid value: ' . $wordings[$setting][bobsi\Settings::nameWordingsTitle], 'error');
-                $prevent_saving = true;
+            if (!call_user_func($wordings[$setting][bobsi\Settings::nameWordingsValidator],
+                $presaved_settings[$setting])
+            ) {
+                $app->enqueueMessage('Invalid value: ' . $wordings[$setting][bobsi\Settings::nameWordingsTitle],
+                    'error');
+                $prevent_saving = TRUE;
             }
         }
 
         if (!$prevent_saving) {
             //Saving tokens
-            $presaved_settings[bobsi\Settings::nameTokenExport] = $this->bidorbuyStoreIntegrator->getSettings()->getTokenExport();
-            $presaved_settings[bobsi\Settings::nameTokenDownload] = $this->bidorbuyStoreIntegrator->getSettings()->getTokenDownload();
+            $presaved_settings[bobsi\Settings::nameTokenExport] =
+                $this->bidorbuyStoreIntegrator->getSettings()->getTokenExport();
+            $presaved_settings[bobsi\Settings::nameTokenDownload] =
+                $this->bidorbuyStoreIntegrator->getSettings()->getTokenDownload();
 
             //see #3628. We added new export criteria: it should affect resetting settings after pressing Save button
             $reset_audit = FALSE;
             if (isset($presaved_settings[BIDORBUY_STORE_INTEGRATOR_CATEGORYSLUG_NAME])) {
-                $previousSettings = (array) $this->bidorbuyStoreIntegrator->getSettings();
+                $previousSettings = (array)$this->bidorbuyStoreIntegrator->getSettings();
                 $previousSettings = array_shift($previousSettings);
-                if (!isset($previousSettings[BIDORBUY_STORE_INTEGRATOR_CATEGORYSLUG_NAME]) || $previousSettings[BIDORBUY_STORE_INTEGRATOR_CATEGORYSLUG_NAME] !== $presaved_settings[BIDORBUY_STORE_INTEGRATOR_CATEGORYSLUG_NAME]) {
+                if (!isset($previousSettings[BIDORBUY_STORE_INTEGRATOR_CATEGORYSLUG_NAME])
+                    || $previousSettings[BIDORBUY_STORE_INTEGRATOR_CATEGORYSLUG_NAME]
+                    !== $presaved_settings[BIDORBUY_STORE_INTEGRATOR_CATEGORYSLUG_NAME]
+                ) {
                     $reset_audit = TRUE;
                 }
             }
 
-            $previousSettingsSerialized = $this->bidorbuyStoreIntegrator->getSettings()->serialize(true);
+            $previousSettingsSerialized = $this->bidorbuyStoreIntegrator->getSettings()->serialize(TRUE);
 
             $this->bidorbuyStoreIntegrator->getSettings()->unserialize(serialize($presaved_settings));
 
-            $newSettingsSerialized = $this->bidorbuyStoreIntegrator->getSettings()->serialize(true);
+            $newSettingsSerialized = $this->bidorbuyStoreIntegrator->getSettings()->serialize(TRUE);
 
             com_bidorbuyStoreIntegratorInstallerScript::updateSettings(bobsi\Settings::name, $newSettingsSerialized);
 
-            if (defined('JVER') && JVER != '1.5') {
-                if ($this->bidorbuyStoreIntegrator->checkIfExportCriteriaSettingsChanged($previousSettingsSerialized, $newSettingsSerialized, true) || $reset_audit) {
-                    require_once(JPATH_ADMINISTRATOR . '/components/com_bidorbuystoreintegrator/script.php');
-                    $x = new com_bidorbuyStoreIntegratorInstallerScript();
-                    JFactory::getDbo()->setQuery($x->getBidorbuyStoreIntegrator()->getQueries()->getTruncateJobsQuery());
-                    JFactory::getDbo()->query();
-                    $x->addAllProductsInQueue(true);
-                }
-
-                $this->clearCache();
+            if ($this->bidorbuyStoreIntegrator->checkIfExportCriteriaSettingsChanged($previousSettingsSerialized,
+                    $newSettingsSerialized, TRUE)
+                || $reset_audit
+            ) {
+                require_once(JPATH_ADMINISTRATOR . '/components/com_bidorbuystoreintegrator/script.php');
+                $x = new com_bidorbuyStoreIntegratorInstallerScript();
+                JFactory::getDbo()->setQuery($x->getBidorbuyStoreIntegrator()->getQueries()->getTruncateJobsQuery());
+                JFactory::getDbo()->query();
+                $x->addAllProductsInQueue(TRUE);
             }
+
+            $this->clearCache();
+
         }
 
-        $this->setRedirect(JRoute::_('index.php?option=com_bidorbuystoreintegrator', false));
+        $this->setRedirect(JRoute::_('index.php?option=com_bidorbuystoreintegrator', FALSE));
     }
 
     public function export() {
-        $this->setRedirect(JRoute::_(JURI::root() . 'index.php?option=com_bidorbuystoreintegrator&task=export&t=' . $this->bidorbuyStoreIntegrator->getSettings()->getTokenExport(), false));
+        $this->setRedirect(JRoute::_(JURI::root() . 'index.php?option=com_bidorbuystoreintegrator&task=export&t='
+            . $this->bidorbuyStoreIntegrator->getSettings()->getTokenExport(), FALSE));
     }
 
     public function download() {
-        $this->setRedirect(JRoute::_(JURI::root() . 'index.php?option=com_bidorbuystoreintegrator&task=download&t=' . $this->bidorbuyStoreIntegrator->getSettings()->getTokenDownload(), false));
+        $this->setRedirect(JRoute::_(JURI::root() . 'index.php?option=com_bidorbuystoreintegrator&task=download&t='
+            . $this->bidorbuyStoreIntegrator->getSettings()->getTokenDownload(), FALSE));
     }
 
     public function refreshTokens() {
         $this->bidorbuyStoreIntegrator->processAction(bobsi\Settings::nameActionReset);
-        com_bidorbuyStoreIntegratorInstallerScript::updateSettings(bobsi\Settings::name, $this->bidorbuyStoreIntegrator->getSettings()->serialize(true));
-        $this->setRedirect(JRoute::_('index.php?option=com_bidorbuystoreintegrator', false));
+        com_bidorbuyStoreIntegratorInstallerScript::updateSettings(bobsi\Settings::name,
+            $this->bidorbuyStoreIntegrator->getSettings()->serialize(TRUE));
+        $this->setRedirect(JRoute::_('index.php?option=com_bidorbuystoreintegrator', FALSE));
     }
 
     private function clearCache() {
         $conf = JFactory::getConfig();
 
-        $options = array(
-            'defaultgroup' => '_system',
-            'cachebase' => $conf->get('cache_path', JPATH_SITE . '/cache')
-        );
+        $options = array('defaultgroup' => '_system', 'cachebase' => $conf->get('cache_path', JPATH_SITE . '/cache'));
 
         $cache = JCache::getInstance('callback', $options);
         $cache->clean();

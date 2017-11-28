@@ -44,23 +44,6 @@ class BidorbuyStoreIntegratorModelSettings extends JModelAdmin {
 //            Fast method
             $data = (array)$this->getParams();
             $data = array_shift($data);
-
-//            Feng Shui method
-//            $data = $this->getParams();
-//            $data[bobsi\Settings::nameVersion] = bobsi\Version::$version;
-//            $data[bobsi\Settings::nameUsername] = $data->getUsername();
-//            $data[bobsi\Settings::namePassword] = $data->getPassword();
-//            $data[bobsi\Settings::nameCurrency] = $data->getCurrency();
-//            $data[bobsi\Settings::nameFilename] = $data->getFilename();
-//            $data[bobsi\Settings::nameCompressLibrary] = $data->getCompressLibrary();
-//            $data[bobsi\Settings::nameDefaultStockQuantity] = $data->getDefaultStockQuantity();
-//            $data[bobsi\Settings::nameExportQuantityMoreThan] = $data->getExportQuantityMoreThan();
-//            $data[bobsi\Settings::nameExportStatuses] = $data->getExportStatuses();
-//            $data[bobsi\Settings::nameExportVisibilities] = $data->getExportVisibilities();
-//            $data[bobsi\Settings::nameExcludeCategories] = $data->getExcludeCategories();
-//            $data[bobsi\Settings::nameEnableEmailNotifications] = $data->getEnableEmailNotifications();
-//            $data[bobsi\Settings::nameEmailNotificationAddresses] = $data->getEmailNotificationAddresses();
-//            $data[bobsi\Settings::nameLoggingLevel] = $data->getLoggingLevel();
         }
 
         return $data;

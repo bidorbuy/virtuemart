@@ -18,8 +18,10 @@ use com\extremeidea\bidorbuy\storeintegrator\core as bobsi;
 
 // import Joomla view library
 jimport('joomla.application.component.view');
+$jver = new JVersion();
+defined('JVER') OR define('JVER', $jver->RELEASE);
 
-class BidorbuyStoreIntegratorViewSettings extends JView {
+class BidorbuyStoreIntegratorViewSettings extends JViewLegacy {
 
     protected $form;
     protected $params;
@@ -29,16 +31,16 @@ class BidorbuyStoreIntegratorViewSettings extends JView {
         parent::__construct($config);
     }
 
-    function display($tpl = null) {
+    function display($tpl = NULL) {
         $document = JFactory::getDocument();
-        JHTML::_('behavior.mootools');
-        $document->setMetaData( 'X-UA-Compatible', 'IE=9', true );
-        $document->addStyleSheet(JURI::root() . 'administrator/components/com_bidorbuystoreintegrator/assets/css/settings.css');
-        $document->addScript(JURI::root() . 'administrator/components/com_bidorbuystoreintegrator/assets/js/admin_mootools_based.js');
+        JHtml::_('behavior.framework', true);
+        $document->setMetaData('X-UA-Compatible', 'IE=9', TRUE);
+        $document->addStyleSheet(JURI::root()
+            . 'administrator/components/com_bidorbuystoreintegrator/assets/css/settings.css');
+        $document->addScript(JURI::root()
+            . 'administrator/components/com_bidorbuystoreintegrator/assets/js/admin_mootools_based.js');
 
-        $this->form = (defined('JVER') && JVER == '1.5') ?
-            new BidorbuyStoreIntegratorForm() :
-            $this->form = $this->get('Form');
+        $this->form = $this->get('Form');
 
         $this->params = $this->get('Params');
 
@@ -53,11 +55,11 @@ class BidorbuyStoreIntegratorViewSettings extends JView {
     protected function addToolBar() {
         JToolBarHelper::title(JText::_(bobsi\Version::$name), 'bidorbuystoreintegrator');
 
-        JToolBarHelper::custom('save', 'publish.png', 'publish-f2.png', 'Save', false);
+        JToolBarHelper::custom('save', 'publish.png', 'publish-f2.png', 'Save', FALSE);
         JToolBarHelper::divider();
-        JToolBarHelper::custom('export', 'archive.png', 'archive-f2.png', 'Export Tradefeed', false);
-        JToolBarHelper::custom('download', 'download.png', 'download-f2.png', 'Download Tradefeed', false);
+        JToolBarHelper::custom('export', 'archive.png', 'archive-f2.png', 'Export Tradefeed', FALSE);
+        JToolBarHelper::custom('download', 'download.png', 'download-f2.png', 'Download Tradefeed', FALSE);
         JToolBarHelper::divider();
-        JToolBarHelper::custom('refreshTokens', 'refresh.png', 'refresh-f2.png', 'Reset Tokens', false);
+        JToolBarHelper::custom('refreshTokens', 'refresh.png', 'refresh-f2.png', 'Reset Tokens', FALSE);
     }
 }

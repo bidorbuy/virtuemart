@@ -11,26 +11,29 @@ window.addEvent('domready', function () {
     //$('loggingForm').dispose();
 
     //Handle Export
-    if ($('export')) {
-        $('export').parentNode.appendChild(launchButton.clone().set('id','exportBtn'));
+    var exportLink = $('export');
+    if (exportLink) {
+        exportLink.parentNode.appendChild(launchButton.clone().set('id','exportBtn'));
         $('exportBtn').addEvent('click',function () {
-            window.open($('export').get('value'));
+            window.open(exportLink.get('value'));
         });
     }
 
     //Handle Download
-    if ($('download')) {
-        $('download').parentNode.appendChild(launchButton.clone().set('id','downloadBtn'));
+    var downloadLink = $('download');
+    if (downloadLink) {
+        downloadLink.parentNode.appendChild(launchButton.clone().set('id','downloadBtn'));
         $('downloadBtn').addEvent('click',function () {
-            window.open($('download').get('value'));
+            window.open(downloadLink.get('value'));
         });
     }
 
     //Handle Reset Audit (Reset export data) link and button
-    if ($('resetaudit')) {
-        $('resetaudit').parentNode.appendChild(launchButton.clone().set('id','resetAuditBtn'));
+    var resetAuditLink = $('resetaudit');
+    if (resetAuditLink) {
+        resetAuditLink.parentNode.appendChild(launchButton.clone().set('id','resetAuditBtn'));
         $('resetAuditBtn').addEvent('click',function () {
-            window.open($('resetaudit').get('value'));
+            window.open(resetAuditLink.get('value'));
         });
     }
 
@@ -108,18 +111,53 @@ window.addEvent('domready', function () {
         return false;
     });
 
-    var savebutton = $('toolbar-publish').getElement('a');
-    savebutton.setProperty('onclick', '');
-    savebutton.addEvent('click', function () {
-        $$('#bobsi-exc-categories option').setProperty('selected', 'selected');
-        submitbutton('save');
-//        Joomla.submitbutton('save'); //how to automate?
-    });
+    savebutton = $('toolbar-publish');
+    if (savebutton.getElement('a')) {
 
+        savebutton.getElement('a').setProperty('onclick', '');
+        savebutton.getElement('a').addEvent('click', function () {
+            $$('#bobsi-exc-categories option').setProperty('selected', 'selected');
+            submitbutton('save');
+//        Joomla.submitbutton('save'); //how to automate?
+        });
+    } else {
+        var button = savebutton.getElement('button');
+        button.setProperty('onclick', '');
+        button.addEvent('click', function () {
+            $$('#bobsi-exc-categories option').setProperty('selected', 'selected');
+            submitbutton('save');
+        });
+    }
     //start export in new window
-    $('toolbar-archive').getElement('a').setProperties({onclick: '', href: $('export').getProperty('value'), target: '_blank'});
+    var archiveLink = $('toolbar-archive');
+    if (archiveLink.getElement('a')) {
+        archiveLink.getElement('a').setProperties({
+            onclick: '',
+            href: exportLink.getProperty('value'),
+            target: '_blank'
+        });
+    } else {
+        var button1 = archiveLink.getElement('button');
+        button1.setProperty('onclick', '');
+        button1.addEvent('click', function () {
+            window.open(exportLink.getProperty('value'))
+        });
+    }
     //start download in new window
-    $('toolbar-download').getElement('a').setProperties({onclick: '', href: $('download').getProperty('value'), target: '_blank'});
+    var downloadToolbarLink = $('toolbar-download');
+    if (downloadToolbarLink.getElement('a')) {
+        downloadToolbarLink.getElement('a').setProperties({
+            onclick: '',
+            href: downloadLink.getProperty('value'),
+            target: '_blank'
+        });
+    } else {
+        var button2 = downloadToolbarLink.getElement('button');
+        button2.setProperty('onclick', '');
+        button2.addEvent('click', function () {
+            window.open(downloadLink.getProperty('value'))
+        });
+    }
     //Set the same  height for "Export Configurations" and "Export Criteria"
     $$('div.fltrt .panelform').each(function (item_rt) {
         item_rt.setStyle('height', $$('div.fltlft fieldset.panelform')[0].getStyle('height'))
@@ -160,7 +198,11 @@ window.addEvent('domready', function () {
                     'overflow': 'hidden'
                 }
             });
-            tmd_div.inject('footer', 'after');
+            var footer = $('footer');
+            if (!footer) {
+                footer = $('status');
+            }
+            tmd_div.inject(footer, 'after');
             sel = $$('.bobsi-categories-select option');
             sel.each(function (item) {
                 el = new Element('span', {
@@ -210,6 +252,9 @@ window.addEvent('domready', function () {
 });
 
 function saveButtonClick() {
-    savebutton = $('toolbar-publish').getElement('a');
-    savebutton.click();
+    if (savebutton.getElement('a')) {
+        savebutton.getElement('a').click();
+    } else {
+        savebutton.getElement('button').click();
+    }
 }

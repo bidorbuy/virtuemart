@@ -76,7 +76,7 @@ class JFormFieldBobCategories extends JFormFieldList {
         $html[] = '<table><tr><td><label for="bobsi-inc-categories">Included Categories</label></td>
                     <td></td><td><label for="bobsi-exc-categories">Excluded Categories</label></td></tr>';
         $html[] = '<tr><td>' . $included_categories . '</td>';
-        $html[] = '<td>
+        $html[] = '<td style="text-align:center">
                       <div class="buttons_criteria">
                         <p class="submit"><button name="include" id="include" class="button" type="button">< Include</button></p>
                         <p class="submit"><button name="exclude" id="exclude" class="button" type="button">> Exclude</button></p>

@@ -2,6 +2,13 @@
 
 ### Changelog
 
+#### 2.0.12
+
+* Added support for next Joomla version: Joomla 3.6.5 (VM 3.2.0), Joomla 3.6.5 (VM 3.2.1), Joomla 3.7.0 (VM 3.2.2).
+* Removed send logs to email feature.
+
+_[Updated on November 28, 2017]_
+
 #### 2.0.11
 
 * Reporting each Reset Audit effort as an extra notification in a log file (only for Debug logging level).

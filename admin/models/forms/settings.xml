@@ -20,13 +20,6 @@
         <field name="defaultStockQuantity" type="text" default="5"
                label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_MINQTYINSTOCK_TITLE"
                description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_MINQTYINSTOCK_DESC" filter="integer"/>
-        <field name="enableNotificationAddresses" type="text" default=""
-               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_SENDLOGSTOEMAILS_TITLE"
-               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_SENDLOGSTOEMAILS_DESC"/>
-        <field name="enableEmailNotifications" type="checkbox"
-               label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_ENABLEEMAILNOTIFICATIONS_TITLE"
-               description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_ENABLEEMAILNOTIFICATIONS_DESC" value="1"
-               default="0"/>
         <field name="loggingLevel" type="LoggingLevel"
                label="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_LOGLEVEL_TITLE"
                description="COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_LOGLEVEL_DESC" default="error">

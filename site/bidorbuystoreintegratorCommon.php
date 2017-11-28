@@ -16,7 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use com\extremeidea\bidorbuy\storeintegrator\core as bobsi;
 
-class BidorbuyStoreIntegratorControllerCommon extends JController {
+class BidorbuyStoreIntegratorControllerCommon extends JControllerLegacy {
 
     protected $bidorbuyStoreIntegrator = null;
 

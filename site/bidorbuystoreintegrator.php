@@ -17,7 +17,7 @@ defined('_JEXEC') or die('Restricted access');
 // import joomla controller library
 jimport('joomla.application.component.controller');
 
-require_once(JPATH_COMPONENT . DS . 'controller.php');
+require_once(JPATH_COMPONENT . DIRECTORY_SEPARATOR . 'controller.php');
 
 // Create an instance of the controller
 $controller = new BidorbuyStoreIntegratorController();

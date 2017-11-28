@@ -26,15 +26,14 @@ $baa = $input->get('baa', '', 'get');
 
 $formData = (array)$this->params;
 $formData = array_shift($formData);
+$fieldset_tpl = $this->form->getFieldset('COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS');
 
 /* Feature 3909*/
-$warnings = array_merge(
-    bobsi\StaticHolder::getBidorbuyStoreIntegrator()->getWarnings(),
-    bobsi\StaticHolder::getWarnings()->getBusinessWarnings()
-);
+$warnings = array_merge(bobsi\StaticHolder::getBidorbuyStoreIntegrator()->getWarnings(),
+    bobsi\StaticHolder::getWarnings()->getBusinessWarnings());
 
 foreach ($warnings as $warning) {
-    JFactory::getApplication()->enqueueMessage($warning, 'error');
+    JFactory::getApplication()->enqueueMessage($warning, 'warning');
 }
 /*      3909        */
 
@@ -52,71 +51,72 @@ foreach ($warnings as $warning) {
     <!-- END ADVERTPRO CODE BLOCK -->
 </div>
 
-<form action="<?php echo JRoute::_('index.php?option=com_bidorbuystoreintegrator'); ?>" method="post" name="adminForm" id="bob-settings">
-    <div class="width-50 fltlft">
-        <fieldset class="panelform">
+<form action="<?php echo JRoute::_('index.php?option=com_bidorbuystoreintegrator'); ?>" method="post" name="adminForm"
+      id="adminForm" class="bob-settings">
+    <div class="bobsi-width-50 fltlft">
+        <fieldset class="panelform bobsi-min-height">
             <legend><?php echo JText::_('COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS_TITLE'); ?></legend>
-            <ul class="adminformlist">
-
-                <!------------------------------Feature 3751-------------------------------------------------------->
-                <?php
-                $fieldset_tpl = $this->form->getFieldset('COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CONFIGS');
-                ?>
-                <li>
+            <table class="bobsi-export-configurations">
+                <tbody>
+                <tr>
                     <?php
                     // File name
                     $fs = $fieldset_tpl['jform_filename'];
-                    echo $fs->label;
-                    echo $fs->input;
+                    echo "<td>{$fs->label}</td>";
+                    echo "<td>{$fs->input}</td>";
                     ?>
-                </li>
-                <li>
+                </tr>
+                <tr>
                     <?php
                     $fs = $fieldset_tpl['jform_compressLibrary'];
-                    echo $fs->label;
-                    echo $fs->input;
+                    echo "<td>{$fs->label}</td>";
+                    echo "<td>{$fs->input}</td>";
                     ?>
-                </li>
-                <li>
+                </tr>
+                <tr>
                     <?php
                     $fs = $fieldset_tpl['jform_defaultStockQuantity'];
-                    echo $fs->label;
-                    echo $fs->input;
+                    echo "<td>{$fs->label}</td>";
+                    echo "<td>{$fs->input}</td>";
                     ?>
-                </li>
-                <li>
+                </tr>
+                <tr>
                     <?php
                     $fs = $fieldset_tpl['jform_categorySlug'];
-                    echo $fs->label;
-                    echo $fs->input;
+                    echo "<td>{$fs->label}</td>";
+                    echo "<td>{$fs->input}</td>";
                     ?>
-                </li>
-            </ul>
+                </tr>
+                </tbody>
+            </table>
         </fieldset>
     </div>
 
 
-    <div class="width-50 fltrt">
-        <fieldset class="panelform">
+    <div class="bobsi-width-50 fltrt">
+        <fieldset class="panelform bobsi-min-height">
             <legend><?php echo JText::_('COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA_TITLE'); ?></legend>
             <ul class="adminformlist">
-                <?php foreach ($this->form->getFieldset('COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA') as $field): ?>
+                <?php foreach ($this->form->getFieldset('COM_BIDORBUYSTOREINTEGRATOR_CONFIG_EXPORT_CRITERIA') as $field)
+                    : ?>
                     <li><?php
                         if ($field->name == 'jform[' . bobsi\Settings::nameExcludeCategories . '][]') {
                             echo $field->input;
                         } else {
                             echo $field->label;
                             echo $field->input;
-                        }?></li>
+                        } ?></li>
                 <?php endforeach; ?>
             </ul>
         </fieldset>
     </div>
-    <input type="hidden" name="<?php echo bobsi\Settings::nameTokenDownload; ?>" value="<?php echo $this->params->getTokenDownload(); ?>">
-    <input type="hidden" name="<?php echo bobsi\Settings::nameTokenExport; ?>" value="<?php echo $this->params->getTokenExport(); ?>">
+    <input type="hidden" name="<?php echo bobsi\Settings::nameTokenDownload; ?>"
+           value="<?php echo $this->params->getTokenDownload(); ?>">
+    <input type="hidden" name="<?php echo bobsi\Settings::nameTokenExport; ?>"
+           value="<?php echo $this->params->getTokenExport(); ?>">
 
     <div>
-        <input type="hidden" name="task" value="" />
+        <input type="hidden" name="task" value=""/>
         <?php echo JHtml::_('form.token'); ?>
     </div>
     <!-------------------------------------------Feature 3751 ------------------------------------------------------------->
@@ -124,55 +124,39 @@ foreach ($warnings as $warning) {
         <fieldset id="debug" class="panelform">
             <legend>Debug</legend>
 
-            <?php if($baa == 1): ?>
+            <?php if ($baa == 1): ?>
 
-            <h4> <span>Basic Access Authentication</span></h4>
-            <span style="font-size: 12px">(if necessary)</span>
-            <h4><span style="color: red">
+                <h4><span>Basic Access Authentication</span></h4>
+                <span style="font-size: 12px">(if necessary)</span>
+                <h4><span style="color: red">
                     Do not enter username or password of ecommerce platform, please read carefully about this kind of authentication!
                 </span>
-            </h4>
-            <ul class="adminformlist">
-                <li>
-                    <?php
-                    $fs = $fieldset_tpl['jform_username'];
-                    echo $fs->label;
-                    echo $fs->input;
-                    ?>
-                </li>
-                <li>
-                    <?php
-                    $fs = $fieldset_tpl['jform_password'];
-                    echo $fs->label;
-                    echo $fs->input;
-                    ?>
-                </li>
-            </ul>
+                </h4>
+                <ul class="adminformlist">
+                    <li>
+                        <?php
+                        $fs = $fieldset_tpl['jform_username'];
+                        echo $fs->label;
+                        echo $fs->input;
+                        ?>
+                    </li>
+                    <li>
+                        <?php
+                        $fs = $fieldset_tpl['jform_password'];
+                        echo $fs->label;
+                        echo $fs->input;
+                        ?>
+                    </li>
+                </ul>
 
             <?php else: ?>
-                <input type="hidden" name="jform[<?= bobsi\Settings::nameUsername; ?>]"  value="<?= $formData[bobsi\Settings::nameUsername]; ?>">
-                <input type="hidden" name="jform[<?= bobsi\Settings::namePassword; ?>]"  value="<?= $formData[bobsi\Settings::namePassword]; ?>">
-            <?php endif;?>
-
+                <input type="hidden" name="jform[<?= bobsi\Settings::nameUsername; ?>]"
+                       value="<?= $formData[bobsi\Settings::nameUsername]; ?>">
+                <input type="hidden" name="jform[<?= bobsi\Settings::namePassword; ?>]"
+                       value="<?= $formData[bobsi\Settings::namePassword]; ?>">
+            <?php endif; ?>
+            <h4>Logs</h4>
             <ul class="adminformlist">
-
-                <li>
-                    <label><h4>Logs</h4></label>
-                </li>
-                <li>
-                    <?php
-                    $fs = $fieldset_tpl['jform_enableNotificationAddresses'];
-                    echo $fs->label;
-                    echo $fs->input;
-                    ?>
-                </li>
-                <li>
-                    <?php
-                    $fs = $fieldset_tpl['jform_enableEmailNotifications'];
-                    echo $fs->label;
-                    echo $fs->input;
-                    ?>
-                </li>
                 <li>
                     <?php
                     $fs = $fieldset_tpl['jform_loggingLevel'];
@@ -189,7 +173,7 @@ foreach ($warnings as $warning) {
 </form>
 <!-- Logs section ---------------------->
 <div id="logs">
-    <?php echo $this->bidorbuyStoreIntegrator->getLogsHtml();  ?>
+    <?php echo $this->bidorbuyStoreIntegrator->getLogsHtml(); ?>
 </div>
 
 
@@ -200,23 +184,30 @@ foreach ($warnings as $warning) {
             <ul>
                 <li>
                     <label for="export" class="">Export</label>
-                    <input class="tokenurl" id="export" type="text" readonly="readonly" value="<?php echo JURI::root() . 'index.php?option=com_bidorbuystoreintegrator&task=export&t=' . $this->params->getTokenExport(); ?>" />
+                    <input class="tokenurl" id="export" type="text" readonly="readonly" value="<?php echo JURI::root()
+                        . 'index.php?option=com_bidorbuystoreintegrator&task=export&t='
+                        . $this->params->getTokenExport(); ?>"/>
                 </li>
                 <li>
                     <label for="download" class="">Download</label>
-                    <input class="tokenurl" id="download" type="text" readonly="readonly" value="<?php echo JURI::root() . 'index.php?option=com_bidorbuystoreintegrator&task=download&t=' . $this->params->getTokenDownload(); ?>" />
+                    <input class="tokenurl" id="download" type="text" readonly="readonly" value="<?php echo JURI::root()
+                        . 'index.php?option=com_bidorbuystoreintegrator&task=download&t='
+                        . $this->params->getTokenDownload(); ?>"/>
                 </li>
             </ul>
 
-                <ul>
-                    <li>
-                        <label for="resetaudit" class=""><?php echo JText::_('COM_BIDORBUYSTOREINTEGRATOR_CONFIG_RESETAUDIT_URL'); ?></label>
-                        <input class="tokenurl" id="resetaudit" type="text" readonly="readonly" value="<?php
-                        echo JURI::root() . 'index.php?option=com_bidorbuystoreintegrator&task=' . bobsi\Settings::nameActionResetExportTables . '&t=' . $this->params->getTokenDownload();
-                        ?>" />
-                    </li>
-                </ul>
-                <div class="bobsi_resetaudit_desc"><?php echo JText::_('COM_BIDORBUYSTOREINTEGRATOR_CONFIG_RESETAUDIT_DESC'); ?></div>
+            <ul>
+                <li>
+                    <label for="resetaudit"
+                           class=""><?php echo JText::_('COM_BIDORBUYSTOREINTEGRATOR_CONFIG_RESETAUDIT_URL'); ?></label>
+                    <input class="tokenurl" id="resetaudit" type="text" readonly="readonly" value="<?php
+                    echo JURI::root() . 'index.php?option=com_bidorbuystoreintegrator&task='
+                        . bobsi\Settings::nameActionResetExportTables . '&t=' . $this->params->getTokenDownload();
+                    ?>"/>
+                </li>
+            </ul>
+            <div
+                class="bobsi_resetaudit_desc"><?php echo JText::_('COM_BIDORBUYSTOREINTEGRATOR_CONFIG_RESETAUDIT_DESC'); ?></div>
 
         </fieldset>
     </div>
@@ -225,9 +216,9 @@ foreach ($warnings as $warning) {
 <div class="width-100 fltlft">
     <fieldset class="panelform">
         <legend>Version</legend>
-        <a href="<?php echo JURI::root() . 'index.php?option=com_bidorbuystoreintegrator&task=showVersion&t=' .
-            $this->params->getTokenDownload() ?>" target="_blank">@See PHP information</a><br><br>
-        Joomla! <?php echo $jver->RELEASE . '.' . $jver->DEV_LEVEL ; ?>,
+        <a href="<?php echo JURI::root() . 'index.php?option=com_bidorbuystoreintegrator&task=showVersion&t='
+            . $this->params->getTokenDownload() ?>" target="_blank">@See PHP information</a><br><br>
+        Joomla! <?php echo $jver->RELEASE . '.' . $jver->DEV_LEVEL; ?>,
         <?php echo bobsi\Version::getLivePluginVersion(); ?>
     </fieldset>
 </div>

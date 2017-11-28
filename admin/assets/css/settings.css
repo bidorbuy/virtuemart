@@ -11,13 +11,20 @@
 }
 
 .hasTip,
-ul li select,
-ul li input:not([type="checkbox"]) {
+table.bobsi-export-configurations select,
+table.bobsi-export-configurations input:not([type="checkbox"]) {
     width: 250px;
+    padding-left: 0;
+    padding-right: 0;
 }
 
-.width-50 fieldset {
-    min-height: 280px;
+.bobsi-width-50 {
+    background-color: #fff;
+    width: 50%;
+}
+
+.bobsi-min-height {
+    min-height: 300px;
 }
 
 #links input, #advanced input {
@@ -92,11 +99,10 @@ fieldset ul {
 
 fieldset.panelform label, fieldset.panelform div.paramrow label, fieldset.panelform span.faux-label {
     min-width: 145px;
-    max-width: 250px;
     padding: 0 5px 0 0;
 }
 
-#bob-settings div:first-child {
+.bob-settings div:first-child {
     clear: left;
 }
 
@@ -104,4 +110,8 @@ div.bobsi_resetaudit_desc {
     width: 100%;
     float: left;
     padding-left: 20px;
+}
+
+ul.adminformlist select {
+    width: 250px;
 }

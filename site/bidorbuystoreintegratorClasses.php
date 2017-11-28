@@ -157,7 +157,10 @@ class BidorbuyStoreIntegratorControllerVM2 extends BidorbuyStoreIntegratorContro
 
             //Get variations of the current product
             //Fetching all custom fields and sort fields by 'is_cart_attribute'
-            $customFields = $this->virtueMartCustomFields->getproductCustomslist($product->virtuemart_product_id);
+            $getProductCustomslist = method_exists($this->virtueMartCustomFields, 'getproductCustomslist') ? 
+                'getproductCustomslist' : 'getProductCustomSelectFieldList';
+            
+            $customFields = $this->virtueMartCustomFields->$getProductCustomslist($product->virtuemart_product_id);
             $customFieldsCart = array();
             $variations = array();
             if (is_array($customFields) && !empty($customFields)) {
@@ -223,11 +226,23 @@ class BidorbuyStoreIntegratorControllerVM2 extends BidorbuyStoreIntegratorContro
         return $exportProducts;
     }
 
+    /**
+     * Get export category criteria
+     *
+     * @param array $ids exclude categories ids
+     * @param array $categories categories
+     *
+     * @return array
+     */
     public function getExportCategoriesIds($ids = array(), $categories = array()) {
         //Set (_noLimit = true) to avoid VirtueMart limit: Configuration->Templates "Frontend default items per list view"
         $isLimit = $this->virtueMartModelCategory->_noLimit;
         $this->virtueMartModelCategory->_noLimit = true;
-        $categories = $this->virtueMartModelCategory->getCategories(false);
+        //Defect: empty tradefeed
+        //VirtueMart 2.x: $onlyPublished = true, $parentId = false, $childId = false, $keyword = ""
+        //Vendor id hardcoded in function getCategories.
+        //VirtueMart 3.x: $onlyPublished = true, $parentId = false, $childId = false, $keyword = "", $vendorId = false
+        $categories = $this->virtueMartModelCategory->getCategories(FALSE, FALSE, FALSE, "", 1);
         $this->virtueMartModelCategory->_noLimit = $isLimit;
 
         $uncategorized = new stdClass();
@@ -270,8 +285,9 @@ class BidorbuyStoreIntegratorControllerVM2 extends BidorbuyStoreIntegratorContro
         $taxes[] = $this->calculationHelper->gatherEffectingRulesForProductPrice('VatTax', $product->product_tax_id);
 
         $discounts = array();
-        $discounts[] = $this->calculationHelper->gatherEffectingRulesForProductPrice('DBTax', $product->product_discount_id);
-        $discounts[] = $this->calculationHelper->gatherEffectingRulesForProductPrice('DATax', $product->product_discount_id);
+        $productDiscountId = property_exists($product, 'product_discount_id') ? $product->product_discount_id : $product->prices['product_discount_id'];
+        $discounts[] = $this->calculationHelper->gatherEffectingRulesForProductPrice('DBTax', $productDiscountId);
+        $discounts[] = $this->calculationHelper->gatherEffectingRulesForProductPrice('DATax', $productDiscountId);
         //It isn't necessary apply marge rules because marge is included to  $product->prices['basePrice']
         //$margeArray[] = $this->calculationHelper->gatherEffectingRulesForProductPrice('Marge', $product->product_marge_id);
 
@@ -296,13 +312,21 @@ class BidorbuyStoreIntegratorControllerVM2 extends BidorbuyStoreIntegratorContro
         $totalPrice = $this->applyRules($discounts, $totalPrice + $varPrices);
         $priceFinal = round($totalPrice, 2);
 
-        if ($product->override == 1) {
+        $productOverride = property_exists($product, 'override') ? $product->override : $product->prices['override'];
+
+        if ($productOverride == 1) {
             //This case "Overwrite final"
-            $exportedProduct[bobsi\Tradefeed::nameProductPrice] = $product->product_override_price;
+            $productOverridePrice = property_exists($product, 'product_override_price') ?
+                $product->product_override_price : $product->prices['product_override_price'];
+
+            $exportedProduct[bobsi\Tradefeed::nameProductPrice] = $productOverridePrice;
             $exportedProduct[bobsi\Tradefeed::nameProductMarketPrice] = $priceWithoutReduct;
-        } elseif ($product->override == -1) {
+        } elseif ($productOverride == -1) {
             //This case "Overwrite price to be taxed"
-            $exportedProduct[bobsi\Tradefeed::nameProductPrice] = $this->applyRules($taxes, $product->product_override_price);
+            $productOverridePrice = property_exists($product, 'product_override_price') ?
+                $product->product_override_price : $product->prices['product_override_price'];
+
+            $exportedProduct[bobsi\Tradefeed::nameProductPrice] = $this->applyRules($taxes, $productOverridePrice);
             $exportedProduct[bobsi\Tradefeed::nameProductMarketPrice] = $priceWithoutReduct;
         } elseif ($priceFinal != $priceWithoutReduct) {
             $exportedProduct[bobsi\Tradefeed::nameProductPrice] = $priceFinal;

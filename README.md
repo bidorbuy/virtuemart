@@ -2,13 +2,14 @@
 
 ### Compatibility
 
-| Product | Joomla v2.5.28 | Joomla v2.5.28 |PHP version |
-| ------- | --- | --- | --- | --- | --- |
-| Store Integrator-2.0.11 | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|
-| Store Integrator-2.0.10 | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|
-| Store Integrator-2.0.9  | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|
-| Store Integrator-2.0.8  | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.4|
-| Store Integrator-2.0.7  | ✓ VM v2.6.8 | ✓ VM v2.6.17|5.3|
+| Product | PHP version |Joomla v2.5.28 | Joomla v2.5.28 | Joomla v3.6.5|Joomla v3.6.5| Joomla v3.7.0|
+| ------- | --- | --- | --- | --- | --- | --- |
+| Store Integrator-2.0.12 |5.4| ✓ VM v2.6.8 | ✓ VM v2.6.17|✓ VM v3.2.0 (PHP70)|✓ VM v3.2.1(PHP70)|✓ VM v3.2.2 (PHP70)|
+| Store Integrator-2.0.11 |5.4| ✓ VM v2.6.8 | ✓ VM v2.6.17|-|-|-|
+| Store Integrator-2.0.10 | 5.4|✓ VM v2.6.8 | ✓ VM v2.6.17|-|-|-|
+| Store Integrator-2.0.9  | 5.4|✓ VM v2.6.8 | ✓ VM v2.6.17|-|-|-|
+| Store Integrator-2.0.8  | 5.4|✓ VM v2.6.8 | ✓ VM v2.6.17|-|-|-|
+| Store Integrator-2.0.7  | 5.3|✓ VM v2.6.8 | ✓ VM v2.6.17|-|-|-|
 
 
 ### Description
@@ -56,3 +57,6 @@ To upgrade the plugin, please:
 6. Press the `Download` button.
 7. Share Export Links with bidorbuy.
 8. To display BAA fields on the setting page add '&baa=1' to URL in address bar.
+9. For export products without category, enable two options in VirtueMart > Configuration:
+ - Show uncategorised parent products in search results and modules
+ - Show uncategorised child products in search results and modules
