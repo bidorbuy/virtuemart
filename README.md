@@ -4,6 +4,7 @@
 
 | Product | PHP version |Joomla v2.5.28 | Joomla v2.5.28 | Joomla v3.6.5|Joomla v3.6.5| Joomla v3.7.0|
 | ------- | --- | --- | --- | --- | --- | --- |
+| Store Integrator-2.0.13 |5.4| ✓ VM v2.6.8 | ✓ VM v2.6.17|✓ VM v3.2.0 (PHP70)|✓ VM v3.2.1(PHP70)|✓ VM v3.2.2 (PHP70)|
 | Store Integrator-2.0.12 |5.4| ✓ VM v2.6.8 | ✓ VM v2.6.17|✓ VM v3.2.0 (PHP70)|✓ VM v3.2.1(PHP70)|✓ VM v3.2.2 (PHP70)|
 | Store Integrator-2.0.11 |5.4| ✓ VM v2.6.8 | ✓ VM v2.6.17|-|-|-|
 | Store Integrator-2.0.10 | 5.4|✓ VM v2.6.8 | ✓ VM v2.6.17|-|-|-|

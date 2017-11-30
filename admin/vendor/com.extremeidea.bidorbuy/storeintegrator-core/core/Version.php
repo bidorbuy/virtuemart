@@ -28,7 +28,7 @@ class Version {
     public static $platform = '';
 
     public static $id = 'bidorbuystoreintegrator';
-    public static $version = '2.0.12.20171128205550.14b540ba';
+    public static $version = '2.0.13.20171130152319.b8e54f9b';
     public static $coreVersion = '1.1.16.20171108135759.c1840d8c';
     public static $name = 'bidorbuy Store Integrator';
     public static $description = 'The bidorbuy store integrator allows you to get products from your online store 

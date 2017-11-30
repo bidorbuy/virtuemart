@@ -98,6 +98,8 @@ if (!class_exists('com_bidorbuyStoreIntegratorInstallerScript')) {
             if ($type == 'install') {
                 self::updateSettings(bobsi\Settings::name, $this->bidorbuyStoreIntegrator->getSettings()->serialize(true));
             }
+            
+            $this->updateTablesCollation();
 
             JFactory::getDBo()->setQuery($this->bidorbuyStoreIntegrator->getQueries()->getInstallAuditTableQuery());
             JFactory::getDBo()->query();
@@ -224,6 +226,27 @@ if (!class_exists('com_bidorbuyStoreIntegratorInstallerScript')) {
             $query = "ALTER TABLE " . $prefix . bobsi\Queries::TABLE_BOBSI_TRADEFEED . " ADD `images` text AFTER `image_url`";
             JFactory::getDBo()->setQuery($query);
             JFactory::getDBo()->query();
+        }
+
+        private function updateTablesCollation() {
+            $db = JFactory::getDbo();
+            $showTableInfoSql = "SHOW TABLE STATUS WHERE name='{$db->getPrefix()}%s'";
+            $alterTableSql = "ALTER TABLE {$db->getPrefix()}%s CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+            $tableNames = [
+                bobsi\Queries::TABLE_BOBSI_TRADEFEED_AUDIT,
+                bobsi\Queries::TABLE_BOBSI_TRADEFEED,
+                bobsi\Queries::TABLE_BOBSI_TRADEFEED_TEXT
+            ];
+            foreach ($tableNames as $tableName) {
+                $showTableInfoQuery = sprintf($showTableInfoSql, $tableName);
+                $db->setQuery($showTableInfoQuery);
+                $result = $db->loadAssoc();
+                if ($result['Collation'] !== 'utf8_unicode_ci') {
+                    $alterTableQuery = sprintf($alterTableSql, $tableName);
+                    $db->setQuery($alterTableQuery);
+                    $db->query();
+                }
+            }
         }
     }
 
